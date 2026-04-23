@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import { 
-  X, 
-  AlertTriangle, 
-  Lock, 
+import {
+  X,
+  AlertTriangle,
+  Lock,
   ArrowLeft,
   Loader2,
   Maximize2,
@@ -32,7 +32,7 @@ const StudyMode = () => {
   const [isStarted, setIsStarted] = useState(false);
   const [activeView, setActiveView] = useState('pdf');
   const [showEndConfirm, setShowEndConfirm] = useState(false);
-  
+
   const timerRef = useRef(null);
   const statusPollRef = useRef(null);
   const lastWarningTime = useRef(0);
@@ -42,13 +42,13 @@ const StudyMode = () => {
       try {
         const res = await api.get(`/session/start/${id}`);
         setSession(res.data);
-        
+
         const [startH, startM] = res.data.startTime.split(':').map(Number);
         const [endH, endM] = res.data.endTime.split(':').map(Number);
-        
+
         let durationSeconds = (endH * 3600 + endM * 60) - (startH * 3600 + startM * 60);
         if (durationSeconds < 0) durationSeconds += 24 * 3600;
-        
+
         setTimeLeft(durationSeconds);
       } catch (err) {
         console.error('Failed to fetch session info', err);
@@ -68,7 +68,7 @@ const StudyMode = () => {
   const handleStartSession = () => {
     setIsStarted(true);
     startPolling(session.sessionId);
-    
+
     timerRef.current = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
@@ -103,37 +103,41 @@ const StudyMode = () => {
       if (!isStarted || !session?.sessionId || status?.isLocked) return;
       
       try {
-        const token = localStorage.getItem('token');
-        const url = `${api.defaults.baseURL}/session/warn/${session.sessionId}`;
-        
-        await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          keepalive: true
-        });
+        const res = await api.post(`/session/warn/${session.sessionId}`);
+
+        setStatus((prev) => ({
+          ...prev,
+          warnings: res.data.warnings,
+          isLocked: res.data.isLocked,
+        }));
+
+        setShowWarningToast(true);
+
+        setTimeout(() => {
+          setShowWarningToast(false);
+        }, 4000);
+
       } catch (err) {
-        console.error('Failed to send warning', err);
+        console.error("Warning API error:", err);
       }
     };
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') triggerWarning();
-    };
-    const handleBlur = () => triggerWarning();
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('blur', handleBlur);
-    window.addEventListener('pagehide', handleBlur);
-    
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('blur', handleBlur);
-      window.removeEventListener('pagehide', handleBlur);
-    };
-  }, [session, status, isStarted]);
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === 'hidden') triggerWarning();
+      };
+      const handleBlur = () => triggerWarning();
+
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      window.addEventListener('blur', handleBlur);
+      window.addEventListener('pagehide', handleBlur);
+
+      return () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        window.removeEventListener('blur', handleBlur);
+        window.removeEventListener('pagehide', handleBlur);
+      };
+    }, [session, status, isStarted]);
 
   const handleEndSession = async () => {
     if (!session?.sessionId) return;
@@ -179,7 +183,7 @@ const StudyMode = () => {
       {/* Immersive Header */}
       <header className="h-16 lg:h-20 border-b border-white/5 flex items-center justify-between px-4 lg:px-6 z-20 bg-black/40 backdrop-blur-xl">
         <div className="flex items-center gap-2 lg:gap-4">
-          <button 
+          <button
             onClick={() => navigate('/')}
             className="p-2 hover:bg-white/5 rounded-xl text-white/40 hover:text-white transition-all"
           >
@@ -198,13 +202,13 @@ const StudyMode = () => {
               <span className="text-[9px] lg:text-[11px] font-bold uppercase tracking-wider">W: {status?.warnings || 0}/3</span>
             </div>
           )}
-          <button 
+          <button
             onClick={toggleFullscreen}
             className="hidden lg:block p-2 hover:bg-white/5 rounded-xl text-white/40 transition-all"
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
-          <button 
+          <button
             onClick={() => setShowEndConfirm(true)}
             className="premium-button px-3 lg:px-6 py-2 h-8 lg:h-10 text-[9px] lg:text-xs shadow-none whitespace-nowrap"
           >
@@ -215,14 +219,14 @@ const StudyMode = () => {
 
       {/* Mobile Toggle Bar */}
       <div className="lg:hidden flex border-b border-white/5 bg-black/40">
-        <button 
+        <button
           onClick={() => setActiveView('pdf')}
           className={`flex-1 py-3 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest ${activeView === 'pdf' ? 'text-white bg-white/5' : 'text-white/20'}`}
         >
           <FileText className="w-3.5 h-3.5" />
           Material
         </button>
-        <button 
+        <button
           onClick={() => setActiveView('timer')}
           className={`flex-1 py-3 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest ${activeView === 'timer' ? 'text-white bg-white/5' : 'text-white/20'}`}
         >
@@ -238,8 +242,8 @@ const StudyMode = () => {
           ${activeView === 'pdf' ? 'flex' : 'hidden lg:flex'}
         `}>
           {session.pdf ? (
-            <iframe 
-              src={session.pdf} 
+            <iframe
+              src={session.pdf}
               className="w-full h-full border-none invert brightness-90 contrast-110"
               title="Study Material"
             />
@@ -261,7 +265,7 @@ const StudyMode = () => {
             <p className="text-[8px] lg:text-[10px] font-black text-white/20 mb-4 lg:mb-8 tracking-[0.4em] uppercase">
               {isStarted ? 'Time Remaining' : 'Ready to Start'}
             </p>
-            
+
             <div className="mb-8 lg:mb-12">
               <h1 className="text-6xl lg:text-8xl font-mono font-medium tracking-tight text-white select-none gradient-text" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                 {formatTime(timeLeft)}
@@ -312,14 +316,14 @@ const StudyMode = () => {
       <AnimatePresence>
         {showEndConfirm && (
           <div className="fixed inset-0 z-[120] flex items-center justify-center px-6">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="absolute inset-0 bg-black/80 backdrop-blur-2xl"
               onClick={() => setShowEndConfirm(false)}
             />
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -333,13 +337,13 @@ const StudyMode = () => {
                 Are you sure you want to complete your session now? Your progress will be archived.
               </p>
               <div className="flex flex-col gap-3">
-                <button 
+                <button
                   onClick={handleEndSession}
                   className="premium-button w-full h-14 bg-white text-black"
                 >
                   Yes, Complete
                 </button>
-                <button 
+                <button
                   onClick={() => setShowEndConfirm(false)}
                   className="w-full h-14 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors"
                 >
@@ -353,13 +357,13 @@ const StudyMode = () => {
 
       <AnimatePresence>
         {status?.isLocked && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-2xl px-6"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               className="glass-panel w-full max-w-md p-8 lg:p-12 text-center shadow-[0_0_100px_rgba(239,68,68,0.1)] border-red-500/20"
@@ -371,7 +375,7 @@ const StudyMode = () => {
               <p className="text-white/40 text-[12px] lg:text-sm leading-relaxed mb-8 lg:mb-10">
                 Session locked due to distractions.
               </p>
-              <button 
+              <button
                 onClick={() => navigate('/')}
                 className="premium-button w-full h-12 lg:h-14 bg-white text-black shadow-none"
               >
