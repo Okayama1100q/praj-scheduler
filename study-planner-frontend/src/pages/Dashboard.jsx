@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { 
@@ -9,29 +9,44 @@ import {
   Loader2, 
   X, 
   Calendar,
-  AlertCircle
+  AlertCircle,
+  CheckCircle2,
+  XCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { requestNotificationPermission, sendNotification } from '../services/notificationService';
 
-const CompactScheduleCard = ({ schedule, onStart }) => (
-
+const CompactScheduleCard = ({ schedule, isCompleted, isMissed, onStart }) => (
   <motion.div 
     whileHover={{ scale: 1.02 }}
-    className="bg-white/5 p-2 lg:p-3 rounded-lg lg:rounded-xl border border-white/5 shadow-2xl hover:bg-white/10 hover:border-white/10 transition-all group relative cursor-pointer"
-    onClick={() => onStart(schedule._id)}
+    className={`p-2 lg:p-3 rounded-lg lg:rounded-xl border shadow-2xl transition-all group relative cursor-pointer ${
+      isCompleted 
+        ? 'bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20' 
+        : isMissed
+          ? 'bg-red-500/10 border-red-500/20 hover:bg-red-500/20 opacity-60'
+          : 'bg-white/5 border-white/5 hover:bg-white/10'
+    }`}
+    onClick={() => !isCompleted && !isMissed && onStart(schedule._id)}
   >
     <div className="flex flex-col gap-0.5 lg:gap-1">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-1">
-          <div className="w-1 h-1 rounded-full bg-indigo-500" />
+          <div className={`w-1 h-1 rounded-full ${isCompleted ? 'bg-emerald-500' : isMissed ? 'bg-red-500' : 'bg-indigo-500'}`} />
           <span className="text-[7px] lg:text-[9px] font-bold text-white/40 tracking-tight lg:tracking-widest font-mono">
             {schedule.startTime}
           </span>
         </div>
+        {isCompleted && <CheckCircle2 className="w-2.5 h-2.5 lg:w-3.5 lg:h-3.5 text-emerald-500" />}
+        {isMissed && <XCircle className="w-2.5 h-2.5 lg:w-3.5 lg:h-3.5 text-red-500" />}
       </div>
-      <h4 className="text-[9px] lg:text-[12px] font-bold text-white leading-tight font-syne group-hover:text-indigo-400 transition-colors truncate">
+      <h4 className={`text-[9px] lg:text-[12px] font-bold leading-tight font-syne transition-colors truncate ${
+        isCompleted 
+          ? 'text-emerald-400' 
+          : isMissed
+            ? 'text-red-400'
+            : 'text-white group-hover:text-indigo-400'
+      }`}>
         {schedule.subject}
       </h4>
     </div>
@@ -67,7 +82,6 @@ const CreateScheduleModal = ({ isOpen, onClose, onSuccess, preselectedDay }) => 
       onSuccess();
       onClose();
     } catch (err) {
-
       console.error(err);
     } finally {
       setLoading(false);
@@ -180,6 +194,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [schedules, setSchedules] = useState([]);
+  const [completedSessions, setCompletedSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState('Monday');
@@ -187,10 +202,24 @@ const Dashboard = () => {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const times = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
 
-  const fetchSchedules = async () => {
+  const fetchData = async () => {
     try {
-      const res = await api.get('/schedule');
-      setSchedules(res.data);
+      const [schedulesRes, historyRes] = await Promise.all([
+        api.get('/schedule'),
+        api.get('/session/history')
+      ]);
+      setSchedules(schedulesRes.data);
+      
+      const startOfWeek = new Date();
+      startOfWeek.setDate(startOfWeek.getDate() - (startOfWeek.getDay() === 0 ? 6 : startOfWeek.getDay() - 1));
+      startOfWeek.setHours(0, 0, 0, 0);
+
+      const thisWeekSessions = historyRes.data.filter(s => {
+        const sessionDate = new Date(s.startTime);
+        return sessionDate >= startOfWeek && !s.isActive && !s.isLocked;
+      });
+      
+      setCompletedSessions(thisWeekSessions.map(s => s.schedule?._id));
     } catch (err) {
       console.error(err);
     } finally {
@@ -199,12 +228,12 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchSchedules();
+    fetchData();
     requestNotificationPermission();
 
     const interval = setInterval(() => {
       const now = new Date();
-      const currentDay = days[now.getDay() === 0 ? 6 : now.getDay() - 1]; // Adjust for Sunday=0
+      const currentDay = days[now.getDay() === 0 ? 6 : now.getDay() - 1];
       const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
       schedules.forEach(s => {
@@ -212,11 +241,28 @@ const Dashboard = () => {
           sendNotification(`Time to Study: ${s.subject}`, `Your ${s.subject} session is starting now!`);
         }
       });
-    }, 60000); // Check every minute
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [schedules]);
 
+  const isScheduleMissed = (schedule) => {
+    const now = new Date();
+    const currentDay = days[now.getDay() === 0 ? 6 : now.getDay() - 1];
+    
+    // Only check for current day and past days of the week
+    const dayIndex = days.indexOf(schedule.day);
+    const currentDayIndex = days.indexOf(currentDay);
+
+    if (dayIndex < currentDayIndex) return true; // Past day
+    if (dayIndex === currentDayIndex) {
+      const [endH, endM] = schedule.endTime.split(':').map(Number);
+      const endTime = new Date();
+      endTime.setHours(endH, endM, 0, 0);
+      return now > endTime; // Today but time passed
+    }
+    return false; // Future day
+  };
 
   const openAddModal = (day) => {
     setSelectedDay(day);
@@ -230,7 +276,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-white" />
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
       </div>
     );
   }
@@ -240,7 +286,7 @@ const Dashboard = () => {
       <div className="flex flex-row justify-between items-end mb-6 lg:mb-8 gap-4 flex-shrink-0">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
           <h1 className="text-3xl lg:text-5xl font-black text-white mb-1 lg:mb-2 tracking-tighter font-syne uppercase gradient-text">Planner</h1>
-          <p className="text-white/40 font-medium text-[10px] lg:text-sm">Focus architecture for the week.</p>
+          <p className="text-white/40 font-medium text-[10px] lg:text-sm uppercase tracking-widest">Week Architecture</p>
         </motion.div>
         <button 
           onClick={() => openAddModal('Monday')}
@@ -252,7 +298,6 @@ const Dashboard = () => {
       </div>
 
       <div className="flex-1 min-h-0 relative pb-4 overflow-hidden">
-        {/* Header Row */}
         <div className="grid grid-cols-7 lg:grid-cols-8 gap-1 lg:gap-2 mb-2 lg:mb-4 pr-1 lg:pr-0 lg:pl-16">
           {days.map((day) => (
             <div key={day} className="text-center">
@@ -265,7 +310,6 @@ const Dashboard = () => {
         </div>
 
         <div className="flex h-full min-h-0">
-          {/* Time Labels - Desktop Only */}
           <div className="hidden lg:flex flex-col gap-[40px] pt-4 w-16 flex-shrink-0">
             {times.map((time) => (
               <div key={time} className="text-[10px] font-black text-white/20 font-mono tracking-tighter text-right pr-4">
@@ -288,7 +332,6 @@ const Dashboard = () => {
 
               return (
                 <div key={day} className="relative h-full bg-white/[0.02] backdrop-blur-md rounded-xl lg:rounded-[2.5rem] border border-white/5 p-1 lg:p-3 group hover:bg-white/[0.05] transition-all overflow-hidden">
-                  {/* Grid Lines (Subtle) */}
                   <div className="absolute inset-0 pointer-events-none">
                     {[...Array(14)].map((_, i) => (
                       <div key={i} className="w-full h-[1px] bg-white/[0.02]" style={{ top: `${(i / 14) * 100}%` }} />
@@ -296,18 +339,25 @@ const Dashboard = () => {
                   </div>
 
                   <div className="relative h-full">
-                    {daySchedules.map((schedule) => (
-                      <div 
-                        key={schedule._id} 
-                        className="absolute w-full left-0 transition-all px-0.5"
-                        style={{ top: `${calculateTop(schedule.startTime)}%` }}
-                      >
-                        <CompactScheduleCard 
-                          schedule={schedule} 
-                          onStart={handleStartStudy} 
-                        />
-                      </div>
-                    ))}
+                    {daySchedules.map((schedule) => {
+                      const isCompleted = completedSessions.includes(schedule._id);
+                      const isMissed = !isCompleted && isScheduleMissed(schedule);
+                      
+                      return (
+                        <div 
+                          key={schedule._id} 
+                          className="absolute w-full left-0 transition-all px-0.5"
+                          style={{ top: `${calculateTop(schedule.startTime)}%` }}
+                        >
+                          <CompactScheduleCard 
+                            schedule={schedule} 
+                            isCompleted={isCompleted}
+                            isMissed={isMissed}
+                            onStart={handleStartStudy} 
+                          />
+                        </div>
+                      );
+                    })}
                     
                     {daySchedules.length === 0 && (
                       <div className="h-full flex items-center justify-center">
@@ -339,7 +389,7 @@ const Dashboard = () => {
       <CreateScheduleModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onSuccess={fetchSchedules}
+        onSuccess={fetchData}
         preselectedDay={selectedDay}
       />
     </div>

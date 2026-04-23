@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import api from '../api/axios';
-import { Clock, Calendar, CheckCircle, Loader2, BookOpen, BarChart3, TrendingUp } from 'lucide-react';
+import { Clock, Calendar, CheckCircle, Loader2, BookOpen, BarChart3, TrendingUp, PieChart } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const History = () => {
@@ -38,22 +38,26 @@ const History = () => {
     let totalTime = 0;
     
     sessions.forEach(s => {
-      const subject = s.schedule?.subject || 'Other';
+      const subject = s.schedule?.subject || 'Independent';
       const duration = s.duration || 0;
       stats[subject] = (stats[subject] || 0) + duration;
       totalTime += duration;
     });
 
+    const bySubject = Object.entries(stats).sort((a, b) => b[1] - a[1]);
+    const maxTime = Math.max(...bySubject.map(s => s[1]), 1);
+
     return {
-      bySubject: Object.entries(stats).sort((a, b) => b[1] - a[1]),
-      totalTime
+      bySubject,
+      totalTime,
+      maxTime
     };
   }, [sessions]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-white" />
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
       </div>
     );
   }
@@ -67,7 +71,8 @@ const History = () => {
 
       {sessions.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
-          <div className="lg:col-span-1 glass-panel p-8 border-indigo-500/20 bg-indigo-500/5">
+          {/* Summary Card */}
+          <div className="glass-panel p-8 border-indigo-500/20 bg-indigo-500/5">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
                 <TrendingUp className="w-5 h-5" />
@@ -75,20 +80,36 @@ const History = () => {
               <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Total Focus</p>
             </div>
             <h3 className="text-4xl font-black text-white font-syne">{formatDuration(analysis.totalTime)}</h3>
+            <p className="text-[10px] font-bold text-white/20 mt-4 uppercase tracking-widest">Cumulative across all sessions</p>
           </div>
           
+          {/* Detailed Graph Card */}
           <div className="lg:col-span-2 glass-panel p-8">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40">
-                <BarChart3 className="w-5 h-5" />
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40">
+                  <BarChart3 className="w-5 h-5" />
+                </div>
+                <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Subject Intensity</p>
               </div>
-              <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Subject Analysis</p>
+              <PieChart className="w-5 h-5 text-white/10" />
             </div>
-            <div className="flex flex-wrap gap-4">
+
+            <div className="space-y-6">
               {analysis.bySubject.map(([subject, time]) => (
-                <div key={subject} className="px-4 py-2 rounded-xl bg-white/5 border border-white/5">
-                  <span className="text-[11px] font-bold text-white/40 uppercase mr-2">{subject}</span>
-                  <span className="text-sm font-black text-white">{formatDuration(time)}</span>
+                <div key={subject} className="space-y-2">
+                  <div className="flex justify-between items-end">
+                    <span className="text-[11px] font-black text-white/60 uppercase tracking-widest">{subject}</span>
+                    <span className="text-xs font-black text-white">{formatDuration(time)}</span>
+                  </div>
+                  <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(time / analysis.maxTime) * 100}%` }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                      className="h-full bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -106,6 +127,7 @@ const History = () => {
         </div>
       ) : (
         <div className="grid gap-4">
+          <h2 className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] mb-4 ml-4">Detailed Logs</h2>
           {sessions.map((session, index) => (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
