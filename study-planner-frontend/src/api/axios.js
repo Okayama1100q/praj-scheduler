@@ -1,14 +1,19 @@
 import axios from 'axios';
 
+const BASE_URL = import.meta.env.MODE === 'production' 
+  ? 'https://praj-scheduler.onrender.com/api' 
+  : 'http://localhost:5000/api';
+
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: BASE_URL,
 });
 
 // Interceptor to add the token to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    // Send token directly as per requirement
+    config.headers.Authorization = token;
   }
   return config;
 }, (error) => {

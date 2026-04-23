@@ -38,7 +38,7 @@ router.get("/start/:id", auth, async (req, res) => {
         let pdfUrl = null;
 
         if (schedule.pdf) {
-            pdfUrl = `http://localhost:5000/${schedule.pdf}`;
+            pdfUrl = `https://praj-scheduler.onrender.com/${schedule.pdf}`;
         }
 
         res.json({
@@ -135,7 +135,7 @@ router.post("/end/:sessionId", auth, async (req, res) => {
 
         session.isActive = false;
         session.endTime = new Date();
-        
+
         // Calculate duration in seconds
         const start = new Date(session.startTime);
         const end = new Date(session.endTime);
