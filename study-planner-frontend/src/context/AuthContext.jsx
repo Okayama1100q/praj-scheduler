@@ -16,11 +16,9 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
-    const { token } = res.data;
-    
-    const userData = { email, name: email.split('@')[0] }; // Placeholder user info
+  const login = async (username, password) => {
+    const res = await api.post('/auth/login', { username, password });
+    const { token, user: userData } = res.data;
     
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
@@ -34,8 +32,14 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateProfile = (newData) => {
+    const updatedUser = { ...user, ...newData };
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    setUser(updatedUser);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

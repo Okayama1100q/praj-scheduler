@@ -3,10 +3,9 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LogIn, Loader2, ArrowRight } from 'lucide-react';
-import Background from '../components/Background';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,92 +17,105 @@ const Login = () => {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
-      navigate('/');
+      const userData = await login(username, password);
+      if (userData.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
-      setError(err.response?.data?.msg || 'Invalid email or password.');
+
+      setError(err.response?.data?.msg || 'Invalid username or password.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative p-6">
-      <Background />
+    <div className="min-h-screen flex items-center justify-center p-6 relative bg-[var(--bg-primary)] overflow-hidden">
+      {/* Mesh Background */}
+      <div className="mesh-container">
+        <div className="mesh-blob mesh-blob-1" />
+        <div className="mesh-blob mesh-blob-2" />
+        <div className="mesh-blob mesh-blob-3" />
+      </div>
       
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-[440px] glass-panel rounded-[2.5rem] p-10 relative z-10"
+        className="w-full max-w-[440px] relative z-10"
       >
-        <div className="mb-10">
-          <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-indigo-200">
-            <LogIn className="w-7 h-7 text-white" />
-          </div>
-          <h1 className="text-4xl font-satoshi font-bold tracking-tight text-gray-900 mb-2">Welcome Back</h1>
-          <p className="text-gray-500 font-medium">Continue your focus journey.</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="p-4 text-sm font-medium text-red-600 bg-red-50/50 border border-red-100 rounded-2xl"
-            >
-              {error}
-            </motion.div>
-          )}
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 ml-1">Email Address</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-5 py-4 rounded-2xl border border-white bg-white/40 focus:bg-white/80 focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-400/50 transition-all outline-none text-gray-900 placeholder-gray-400"
-              placeholder="Enter your email"
-              required
-            />
+        <div className="glass-panel p-12 shadow-2xl">
+          <div className="mb-12 text-center">
+            <h1 className="text-5xl font-black tracking-tighter text-white mb-3 font-syne uppercase gradient-text">Focus</h1>
+            <p className="text-white/40 font-bold text-sm uppercase tracking-[0.2em]">Launch your session</p>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 ml-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-5 py-4 rounded-2xl border border-white bg-white/40 focus:bg-white/80 focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-400/50 transition-all outline-none text-gray-900 placeholder-gray-400"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full h-14 rounded-2xl bg-gray-900 text-white font-bold transition-all transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 group shadow-2xl shadow-gray-200"
-          >
-            {loading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <>
-                <span>Sign In</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-4 text-[13px] font-bold text-red-400 bg-red-500/10 rounded-2xl border border-red-500/20"
+              >
+                {error}
+              </motion.div>
             )}
-          </button>
-        </form>
 
-        <div className="mt-10 pt-8 border-t border-white/50 text-center">
-          <p className="text-gray-500 font-medium">
-            New here?{' '}
-            <Link to="/register" className="text-indigo-600 hover:text-indigo-700 font-bold transition-colors">
-              Create an account
-            </Link>
-          </p>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] ml-2">Username</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="input-field"
+                placeholder="Unique handle"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] ml-2">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input-field"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="premium-button w-full h-16 flex items-center justify-center gap-3 mt-4"
+            >
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-12 pt-10 border-t border-white/10 text-center">
+            <p className="text-white/40 font-bold text-xs uppercase tracking-widest">
+              No access?{' '}
+              <Link to="/register" className="text-white hover:text-indigo-400 transition-colors underline decoration-indigo-500/30 underline-offset-8">
+                Create Account
+              </Link>
+            </p>
+          </div>
         </div>
+        
+        <p className="text-center mt-10 text-white/20 font-black tracking-[0.4em] text-[10px] uppercase">
+          Praj Scheduler &bull; MMXXIV
+        </p>
       </motion.div>
     </div>
   );

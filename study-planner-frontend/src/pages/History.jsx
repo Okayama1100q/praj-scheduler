@@ -1,24 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import api from '../api/axios';
-import { 
-  Calendar, 
-  Clock, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Lock,
-  Loader2,
-  BookOpen
-} from 'lucide-react';
+import { Clock, Calendar, CheckCircle, Loader2, BookOpen, BarChart3, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const HistoryPage = () => {
+const History = () => {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await api.get('/session');
+        const res = await api.get('/session/history');
         setSessions(res.data);
       } catch (err) {
         console.error('Failed to fetch history', err);
@@ -30,78 +22,122 @@ const HistoryPage = () => {
   }, []);
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const formatTime = (dateString) => {
-    return new Date(dateString).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  const formatDuration = (seconds) => {
+    if (!seconds || isNaN(seconds)) return '0m';
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    return `${h > 0 ? h + 'h ' : ''}${m}m`;
   };
+
+  const analysis = useMemo(() => {
+    const stats = {};
+    let totalTime = 0;
+    
+    sessions.forEach(s => {
+      const subject = s.schedule?.subject || 'Other';
+      const duration = s.duration || 0;
+      stats[subject] = (stats[subject] || 0) + duration;
+      totalTime += duration;
+    });
+
+    return {
+      bySubject: Object.entries(stats).sort((a, b) => b[1] - a[1]),
+      totalTime
+    };
+  }, [sessions]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-white" />
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">History</h1>
-        <p className="text-gray-500">Review your past study sessions and focus performance.</p>
+    <div className="max-w-5xl mx-auto px-4 lg:px-0">
+      <div className="mb-12">
+        <h1 className="text-5xl lg:text-6xl font-black text-white mb-4 tracking-tighter font-syne uppercase gradient-text">Archives</h1>
+        <p className="text-white/40 font-medium text-lg">Your legacy of deep work.</p>
       </div>
 
+      {sessions.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+          <div className="lg:col-span-1 glass-panel p-8 border-indigo-500/20 bg-indigo-500/5">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+              <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Total Focus</p>
+            </div>
+            <h3 className="text-4xl font-black text-white font-syne">{formatDuration(analysis.totalTime)}</h3>
+          </div>
+          
+          <div className="lg:col-span-2 glass-panel p-8">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40">
+                <BarChart3 className="w-5 h-5" />
+              </div>
+              <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Subject Analysis</p>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              {analysis.bySubject.map(([subject, time]) => (
+                <div key={subject} className="px-4 py-2 rounded-xl bg-white/5 border border-white/5">
+                  <span className="text-[11px] font-bold text-white/40 uppercase mr-2">{subject}</span>
+                  <span className="text-sm font-black text-white">{formatDuration(time)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {sessions.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-100 p-20 text-center">
-          <History className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-          <p className="text-gray-500 font-medium">No session history yet.</p>
-          <p className="text-sm text-gray-400">Your completed sessions will appear here.</p>
+        <div className="glass-panel p-20 flex flex-col items-center justify-center text-center">
+          <div className="w-20 h-20 rounded-3xl bg-white/5 flex items-center justify-center text-white/20 mb-8">
+            <BookOpen className="w-10 h-10" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-2">Empty Archives</h2>
+          <p className="text-white/40 max-w-sm">You haven't completed any sessions yet. Start your first session to see it here.</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid gap-4">
           {sessions.map((session, index) => (
             <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
               key={session._id}
-              className="glass-card p-6 rounded-[2rem] flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-lg transition-all"
+              className="glass-panel p-6 lg:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 group hover:bg-white/10 transition-all border-white/5"
             >
-              <div className="flex items-center gap-5">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm ${session.isLocked ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-500'}`}>
-                  {session.isLocked ? <Lock className="w-6 h-6" /> : <CheckCircle2 className="w-6 h-6" />}
+              <div className="flex items-center gap-6 lg:gap-8">
+                <div className="w-12 lg:w-14 h-12 lg:h-14 rounded-2xl bg-white/5 flex items-center justify-center text-indigo-400 border border-white/10 group-hover:scale-110 transition-transform">
+                  <CheckCircle className="w-6 lg:w-7 h-6 lg:h-7" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-satoshi font-bold text-gray-900">{session.schedule?.subject || 'Terminated Session'}</h3>
-                  <div className="flex items-center gap-4 text-[13px] text-gray-400 font-medium">
-                    <span className="flex items-center gap-1.5">
-                      <Calendar className="w-4 h-4" />
-                      {formatDate(session.createdAt)}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Clock className="w-4 h-4" />
-                      {formatTime(session.createdAt)}
-                    </span>
+                <div className="overflow-hidden">
+                  <h3 className="text-lg lg:text-xl font-bold text-white mb-1 group-hover:text-indigo-400 transition-colors font-syne truncate">
+                    {session.schedule?.subject || 'Independent Session'}
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] lg:text-[11px] font-black uppercase tracking-widest text-white/40">
+                    <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3" /> {formatDate(session.startTime)}</span>
+                    <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {formatDuration(session.duration)} spent</span>
                   </div>
                 </div>
               </div>
-
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 text-amber-500 bg-amber-50/50 px-3 py-1.5 rounded-xl border border-amber-100">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span className="text-xs font-bold">{session.warnings} Warnings</span>
-                  </div>
-                  <div className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.1em] ${session.isLocked ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
-                    {session.isLocked ? 'Locked' : 'Perfect'}
+              <div className="flex items-center justify-between lg:justify-end gap-6 border-t lg:border-none border-white/5 pt-4 lg:pt-0">
+                <div className="text-left lg:text-right">
+                  <p className="text-[9px] lg:text-[10px] font-black text-white/20 uppercase tracking-[0.3em] mb-1">Warnings</p>
+                  <div className="flex gap-1 justify-start lg:justify-end">
+                    {[...Array(3)].map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={`w-1.5 lg:w-2 h-1.5 lg:h-2 rounded-full ${i < session.warnings ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'bg-white/10'}`} 
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
@@ -113,4 +149,4 @@ const HistoryPage = () => {
   );
 };
 
-export default HistoryPage;
+export default History;

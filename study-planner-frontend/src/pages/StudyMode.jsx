@@ -8,11 +8,12 @@ import {
   ArrowLeft,
   Loader2,
   Maximize2,
-  Minimize2
+  Minimize2,
+  BookOpen,
+  Clock,
+  ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-import Background from '../components/Background';
 
 const StudyMode = () => {
   const { id } = useParams();
@@ -20,28 +21,26 @@ const StudyMode = () => {
   const [session, setSession] = useState(null);
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [time, setTime] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showWarningToast, setShowWarningToast] = useState(false);
   
   const timerRef = useRef(null);
   const statusPollRef = useRef(null);
 
-  // 1. Initialize Session
   useEffect(() => {
     const startSession = async () => {
       try {
         const res = await api.get(`/session/start/${id}`);
         setSession(res.data);
-        
-        // Start status polling
         startPolling(res.data.sessionId);
         
-        // Start local timer (count up)
+        // Calculate initial time left
+        updateTimer(res.data.endTime);
+        
         timerRef.current = setInterval(() => {
-          setTime(prev => prev + 1);
+          updateTimer(res.data.endTime);
         }, 1000);
-
       } catch (err) {
         console.error('Failed to start session', err);
         navigate('/');
@@ -57,7 +56,27 @@ const StudyMode = () => {
     };
   }, [id, navigate]);
 
-  // 2. Status Polling
+  const updateTimer = (endTimeStr) => {
+    if (!endTimeStr) return;
+    
+    const now = new Date();
+    const [hours, minutes] = endTimeStr.split(':').map(Number);
+    const end = new Date();
+    end.setHours(hours, minutes, 0, 0);
+    
+    // If end time is earlier than now, it might be for the next day?
+    // But usually sessions are within the same day.
+    const diff = end.getTime() - now.getTime();
+    
+    if (diff <= 0) {
+      setTimeLeft(0);
+      clearInterval(timerRef.current);
+      // Optional: Auto-end session when time is up
+    } else {
+      setTimeLeft(Math.floor(diff / 1000));
+    }
+  };
+
   const startPolling = (sessionId) => {
     statusPollRef.current = setInterval(async () => {
       try {
@@ -72,7 +91,6 @@ const StudyMode = () => {
     }, 3000);
   };
 
-  // 3. Tab Switch Detection
   useEffect(() => {
     const handleVisibilityChange = async () => {
       if (document.visibilityState === 'hidden' && session?.sessionId && !status?.isLocked) {
@@ -80,7 +98,7 @@ const StudyMode = () => {
           const res = await api.post(`/session/warn/${session.sessionId}`);
           setStatus(prev => ({ ...prev, warnings: res.data.warnings, isLocked: res.data.locked }));
           setShowWarningToast(true);
-          setTimeout(() => setShowWarningToast(false), 3000);
+          setTimeout(() => setShowWarningToast(false), 4000);
         } catch (err) {
           console.error('Failed to send warning', err);
         }
@@ -102,6 +120,7 @@ const StudyMode = () => {
   };
 
   const formatTime = (seconds) => {
+    if (seconds === null) return '00:00';
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
@@ -122,97 +141,94 @@ const StudyMode = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#fafafa]">
-        <Background />
-        <Loader2 className="w-10 h-10 animate-spin text-indigo-600 relative z-10" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--bg-primary)]">
+        <Loader2 className="w-8 h-8 animate-spin text-white mb-4" />
+        <p className="text-sm font-medium text-white/40">Initializing focus chamber...</p>
       </div>
     );
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-white overflow-hidden selection:bg-indigo-100">
-      <Background />
-      
+    <div className="h-screen w-screen flex flex-col bg-[var(--bg-primary)] text-white overflow-hidden selection:bg-indigo-500/30">
       {/* Immersive Header */}
-      <header className="h-20 border-b border-white/40 flex items-center justify-between px-8 z-20 relative bg-white/20 backdrop-blur-md">
-        <div className="flex items-center gap-6">
+      <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 z-20 bg-black/40 backdrop-blur-xl">
+        <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate('/')}
-            className="p-3 hover:bg-white rounded-2xl text-gray-400 hover:text-gray-900 transition-all shadow-sm"
+            className="p-2 hover:bg-white/5 rounded-xl text-white/40 hover:text-white transition-all"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4" />
           </button>
-          <div className="h-8 w-[1px] bg-gray-200"></div>
-          <h2 className="font-satoshi font-bold text-xl text-gray-900">{session.subject}</h2>
+          <div className="h-4 w-[1px] bg-white/10"></div>
+          <h2 className="font-bold text-sm text-white tracking-tight font-syne uppercase">{session.subject}</h2>
         </div>
 
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2 text-amber-600 bg-amber-50/50 px-4 py-2 rounded-2xl border border-amber-100/50 shadow-sm">
-            <AlertTriangle className="w-4 h-4" />
-            <span className="text-sm font-bold font-satoshi">Session Warnings: {status?.warnings || 0}/3</span>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-amber-400 bg-amber-400/10 px-3 py-1.5 rounded-lg border border-amber-400/20">
+            <AlertTriangle className="w-3.5 h-3.5" />
+            <span className="text-[11px] font-bold uppercase tracking-wider">Warnings: {status?.warnings || 0}/3</span>
           </div>
           <button 
             onClick={toggleFullscreen}
-            className="p-3 hover:bg-white rounded-2xl text-gray-400 transition-all shadow-sm"
+            className="p-2 hover:bg-white/5 rounded-xl text-white/40 transition-all"
           >
-            {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
           <button 
             onClick={handleEndSession}
-            className="px-6 py-3 bg-gray-900 text-white rounded-2xl text-[15px] font-bold hover:bg-indigo-600 transition-all shadow-xl shadow-gray-200"
+            className="premium-button px-6 py-2 h-10 text-xs shadow-none"
           >
-            End session
+            End Session
           </button>
         </div>
       </header>
 
       {/* Main Study Area */}
-      <div className="flex-1 flex overflow-hidden relative z-10">
+      <div className="flex-1 flex overflow-hidden">
         {/* Left: PDF Viewer */}
-        <div className="flex-[3] border-r border-white/40 bg-white/10 flex flex-col">
+        <div className="flex-[3] border-r border-white/5 bg-black/20">
           {session.pdf ? (
             <iframe 
               src={session.pdf} 
-              className="w-full h-full border-none shadow-inner"
+              className="w-full h-full border-none invert brightness-90 contrast-110"
               title="Study Material"
             />
           ) : (
-            <div className="flex-1 flex items-center justify-center text-gray-300 flex-col gap-6">
-              <BookOpen className="w-24 h-24 opacity-10" />
-              <p className="font-satoshi font-medium">No study material provided.</p>
+            <div className="flex-1 flex items-center justify-center h-full text-white/10 flex-col gap-4">
+              <BookOpen className="w-16 h-16 opacity-10" />
+              <p className="text-sm font-medium">No material uploaded.</p>
             </div>
           )}
         </div>
 
         {/* Right: Focus Area */}
-        <div className="flex-[1.4] flex flex-col items-center justify-center p-12 relative overflow-hidden">
-          <div className="text-center relative z-10 w-full max-w-md">
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-xs font-bold text-indigo-500 mb-6 tracking-[0.2em] uppercase font-satoshi"
-            >
-              Current Focus Time
-            </motion.p>
+        <div className="flex-[1.5] flex flex-col items-center justify-center p-12 bg-black/40 relative">
+          {/* Subtle Glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-indigo-500/10 blur-[120px] rounded-full -z-1" />
+
+          <div className="text-center w-full max-w-sm relative z-10">
+            <p className="text-[10px] font-black text-white/20 mb-8 tracking-[0.4em] uppercase">
+              Time Remaining
+            </p>
             
-            <div className="mb-12 relative">
-              <h1 className="text-9xl font-mono font-bold tracking-tighter text-gray-900 animate-subtle-pulse select-none">
-                {formatTime(time)}
+            <div className="mb-12">
+              <h1 className="text-8xl font-mono font-medium tracking-tight text-white select-none gradient-text" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                {formatTime(timeLeft)}
               </h1>
+              <p className="text-[11px] font-bold text-white/20 mt-4 uppercase tracking-[0.2em]">
+                Ends at {session.endTime}
+              </p>
             </div>
             
-            <div className="space-y-6">
-              <div className="p-8 glass-panel rounded-[2.5rem] border-white text-center shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500/20"></div>
-                <p className="text-gray-600 text-lg leading-relaxed font-satoshi font-medium italic">
-                  "Deep work is the superpower of the 21st century."
-                </p>
-              </div>
+            <div className="glass-panel p-8 border-white/5 bg-white/[0.02]">
+              <p className="text-white/60 text-sm leading-relaxed italic">
+                "The successful warrior is the average man, with laser-like focus."
+              </p>
+            </div>
 
-              <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400 font-satoshi mt-12 bg-white/40 px-4 py-2 rounded-full border border-white/60">
-                <Lock className="w-3 h-3" />
-                <span>Security Active</span>
-              </div>
+            <div className="mt-12 flex items-center justify-center gap-2 text-[9px] uppercase tracking-[0.2em] font-black text-white/20">
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-500" />
+              <span>Distraction Shield Active</span>
             </div>
           </div>
         </div>
@@ -224,24 +240,24 @@ const StudyMode = () => {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-2xl px-6"
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-2xl px-6"
           >
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="w-full max-w-md bg-white border border-gray-200 p-10 rounded-[2rem] shadow-2xl text-center"
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              className="glass-panel w-full max-w-md p-12 text-center shadow-[0_0_100px_rgba(239,68,68,0.1)] border-red-500/20"
             >
-              <div className="w-20 h-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-8">
-                <Lock className="w-10 h-10" />
+              <div className="w-16 h-16 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-red-500/20">
+                <Lock className="w-8 h-8" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Session Locked</h2>
-              <p className="text-gray-500 leading-relaxed mb-10">
-                This study session was automatically locked due to multiple distractions. Focus is progress—take a short break and try again later.
+              <h2 className="text-2xl font-black text-white mb-4 font-syne uppercase">Session Locked</h2>
+              <p className="text-white/40 text-sm leading-relaxed mb-10">
+                This study session was automatically locked due to distractions. Focus is essential for progress. Take a break and try again later.
               </p>
               <button 
                 onClick={() => navigate('/')}
-                className="w-full py-4 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition-all shadow-xl shadow-gray-200"
+                className="premium-button w-full h-14 bg-white text-black shadow-none"
               >
                 Return to Dashboard
               </button>
@@ -254,17 +270,17 @@ const StudyMode = () => {
       <AnimatePresence>
         {showWarningToast && (
           <motion.div 
-            initial={{ y: -100, x: '-50%', opacity: 0 }}
-            animate={{ y: 24, x: '-50%', opacity: 1 }}
-            exit={{ y: -100, x: '-50%', opacity: 0 }}
-            className="fixed top-0 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-3 px-6 py-3 bg-white border border-gray-100 shadow-xl rounded-full"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 20, opacity: 0 }}
+            className="fixed bottom-12 right-12 z-[110] flex items-center gap-4 px-6 py-4 glass-panel shadow-2xl rounded-2xl max-w-xs border-white/10"
           >
-            <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
-              <AlertTriangle className="w-4 h-4" />
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 flex-shrink-0 border border-amber-500/20">
+              <AlertTriangle className="w-5 h-5" />
             </div>
-            <div className="pr-2">
-              <p className="text-sm font-bold text-gray-900">Distraction Detected</p>
-              <p className="text-xs text-gray-500">Please stay focused on your study material.</p>
+            <div>
+              <p className="text-[13px] font-bold text-white">Focus Warning</p>
+              <p className="text-[11px] text-white/40 mt-0.5 leading-relaxed">Tab switch detected. Your session will lock after 3 warnings.</p>
             </div>
           </motion.div>
         )}
