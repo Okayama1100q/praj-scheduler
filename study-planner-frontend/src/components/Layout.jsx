@@ -83,7 +83,8 @@ const Layout = ({ children }) => {
 
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
-        <div className="flex flex-col h-full py-12 px-8">
+        <div className="flex flex-col h-full pt-32 lg:pt-12 pb-12 px-8">
+
           <div className="flex items-center gap-4 mb-16 px-2">
             <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shadow-2xl shadow-white/10">
               <BookOpen className="w-5 h-5 text-black" />
