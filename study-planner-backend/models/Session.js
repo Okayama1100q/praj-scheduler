@@ -13,9 +13,20 @@ const sessionSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    endTime: {
+        type: Date
+    },
+    duration: {
+        type: Number, // in seconds
+        default: 0
+    },
     warnings: {
         type: Number,
         default: 0
+    },
+    isActive: {
+        type: Boolean,
+        default: true
     },
     isLocked: {
         type: Boolean,

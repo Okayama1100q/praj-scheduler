@@ -17,14 +17,23 @@ router.get("/start/:id", auth, async (req, res) => {
             return res.status(404).json({ msg: "Schedule not found" });
         }
 
-        const session = new Session({
+        // Check if there's already an active session for this schedule/user
+        let session = await Session.findOne({
             user: req.user,
             schedule: schedule._id,
-            startTime: new Date(),
             isActive: true
         });
 
-        await session.save();
+        if (!session) {
+            session = new Session({
+                user: req.user,
+                schedule: schedule._id,
+                startTime: new Date(),
+                isActive: true
+            });
+            await session.save();
+        }
+
 
         let pdfUrl = null;
 
@@ -36,13 +45,16 @@ router.get("/start/:id", auth, async (req, res) => {
             msg: "Session started",
             sessionId: session._id,
             subject: schedule.subject,
-            pdf: pdfUrl
+            pdf: pdfUrl,
+            startTime: schedule.startTime,
+            endTime: schedule.endTime
         });
 
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 
 // =======================
@@ -75,8 +87,10 @@ router.post("/warn/:sessionId", auth, async (req, res) => {
 
         res.json({
             warnings: session.warnings,
-            locked: session.isLocked
+            locked: session.isLocked,
+            isLocked: session.isLocked
         });
+
 
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -120,11 +134,18 @@ router.post("/end/:sessionId", auth, async (req, res) => {
         }
 
         session.isActive = false;
+        session.endTime = new Date();
+        
+        // Calculate duration in seconds
+        const start = new Date(session.startTime);
+        const end = new Date(session.endTime);
+        session.duration = Math.floor((end - start) / 1000);
 
         await session.save();
 
         res.json({
-            msg: "Session ended successfully"
+            msg: "Session ended successfully",
+            duration: session.duration
         });
 
     } catch (err) {
@@ -133,9 +154,23 @@ router.post("/end/:sessionId", auth, async (req, res) => {
 });
 
 
+
 // =======================
 // GET USER SESSIONS (HISTORY)
 // =======================
+router.get("/history", auth, async (req, res) => {
+    try {
+        const sessions = await Session.find({ user: req.user })
+            .populate("schedule", "subject day")
+            .sort({ createdAt: -1 });
+
+        res.json(sessions);
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 router.get("/", auth, async (req, res) => {
     try {
         const sessions = await Session.find({ user: req.user })
@@ -148,6 +183,7 @@ router.get("/", auth, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 
 // =======================
