@@ -1,11 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;600;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
-
-
 :root {
+
   --bg-primary: #050505;
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
@@ -28,7 +28,9 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.font-syne { font-family: 'Syne', sans-serif; }
+.font-syne {
+  font-family: 'Syne', sans-serif;
+}
 
 /* Mesh Background */
 .mesh-container {
@@ -76,18 +78,33 @@ body {
 }
 
 @keyframes float-1 {
-  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-  100% { transform: translate(10%, 15%) rotate(90deg) scale(1.1); }
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+
+  100% {
+    transform: translate(10%, 15%) rotate(90deg) scale(1.1);
+  }
 }
 
 @keyframes float-2 {
-  0% { transform: translate(0, 0) rotate(0deg) scale(1.1); }
-  100% { transform: translate(-15%, -10%) rotate(-120deg) scale(1); }
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1.1);
+  }
+
+  100% {
+    transform: translate(-15%, -10%) rotate(-120deg) scale(1);
+  }
 }
 
 @keyframes float-3 {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(-20%, 10%) scale(1.2); }
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  100% {
+    transform: translate(-20%, 10%) scale(1.2);
+  }
 }
 
 /* Glassmorphism */
@@ -173,10 +190,19 @@ body {
 }
 
 /* Custom Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
