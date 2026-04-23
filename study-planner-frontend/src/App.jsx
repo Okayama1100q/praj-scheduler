@@ -10,6 +10,7 @@ import StudyMode from './pages/StudyMode';
 import History from './pages/History';
 import Profile from './pages/Profile';
 import AdminPanel from './pages/AdminPanel';
+import InstallPWA from './components/InstallPWA';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, loading } = useAuth();
@@ -27,6 +28,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 function App() {
   return (
     <Router>
+      <InstallPWA />
       <Routes>
         {/* User Routes */}
         <Route path="/login" element={<Login />} />
