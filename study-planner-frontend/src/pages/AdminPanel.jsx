@@ -53,7 +53,7 @@ const AdminPanel = ({ activeTab: initialTab }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#CCFF00]" />
       </div>
     );
   }
@@ -68,7 +68,7 @@ const AdminPanel = ({ activeTab: initialTab }) => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             <StatCard icon={Users} title="Registered Users" value={stats?.totalUsers || 0} color="bg-blue-500" />
-            <StatCard icon={BookOpen} title="Total Schedules" value={stats?.totalSchedules || 0} color="bg-indigo-500" />
+            <StatCard icon={BookOpen} title="Total Schedules" value={stats?.totalSchedules || 0} color="bg-[#CCFF00]" />
             <StatCard icon={Activity} title="Total Sessions" value={stats?.totalSessions || 0} color="bg-emerald-500" />
             <StatCard icon={ShieldAlert} title="Security Locks" value={stats?.lockedSessions || 0} color="bg-red-500" />
           </div>
@@ -79,7 +79,7 @@ const AdminPanel = ({ activeTab: initialTab }) => {
         <button 
           onClick={() => setActiveTab('users')}
           className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-            activeTab === 'users' ? 'bg-indigo-600 text-white' : 'text-white/40 hover:text-white'
+            activeTab === 'users' ? 'bg-[#CCFF00] text-[#131810]' : 'text-white/40 hover:text-white'
           }`}
         >
           Users
@@ -87,7 +87,7 @@ const AdminPanel = ({ activeTab: initialTab }) => {
         <button 
           onClick={() => setActiveTab('sessions')}
           className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-            activeTab === 'sessions' ? 'bg-indigo-600 text-white' : 'text-white/40 hover:text-white'
+            activeTab === 'sessions' ? 'bg-[#CCFF00] text-[#131810]' : 'text-white/40 hover:text-white'
           }`}
         >
           Sessions
@@ -117,7 +117,7 @@ const AdminPanel = ({ activeTab: initialTab }) => {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white font-syne">{user.name}</h3>
-                    <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">@{user.username}</p>
+                    <p className="text-[9px] font-black text-[#CCFF00] uppercase tracking-widest">@{user.username}</p>
                   </div>
                 </div>
                 <span className="text-xs font-medium text-white/40 text-center truncate px-4">{user.email}</span>
@@ -148,7 +148,7 @@ const AdminPanel = ({ activeTab: initialTab }) => {
               <div key={session._id} className="glass-panel p-6 lg:px-8 grid grid-cols-5 items-center border-white/5 group hover:bg-white/[0.03] transition-all">
                 <div className="flex items-center gap-4 col-span-2">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                    session.isLocked ? 'bg-red-500/10 text-red-500' : 'bg-indigo-500/10 text-indigo-500'
+                    session.isLocked ? 'bg-red-500/10 text-red-500' : 'bg-[#CCFF00]/10 text-[#CCFF00]'
                   }`}>
                     {session.isLocked ? <ShieldAlert className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
                   </div>
@@ -169,9 +169,9 @@ const AdminPanel = ({ activeTab: initialTab }) => {
                   ))}
                 </div>
                 <div className="text-right">
-                  <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${
+                  <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
                     session.isLocked ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 
-                    session.isActive ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 
+                    session.isActive ? 'bg-[#CCFF00]/10 text-[#CCFF00] border border-[#CCFF00]/20' : 
                     'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
                   }`}>
                     {session.isLocked ? 'Locked' : session.isActive ? 'Active' : 'Completed'}

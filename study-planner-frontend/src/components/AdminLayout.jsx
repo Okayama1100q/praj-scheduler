@@ -19,7 +19,7 @@ const AdminSidebarLink = ({ to, icon: Icon, children }) => (
     to={to}
     className={({ isActive }) => `
       flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300
-      ${isActive ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20' : 'text-white/40 hover:bg-white/5 hover:text-white'}
+      ${isActive ? 'bg-[#CCFF00] text-[#131810] shadow-xl shadow-[#CCFF00]/15' : 'text-white/40 hover:bg-white/5 hover:text-white'}
     `}
   >
     <Icon className="w-5 h-5" />
@@ -38,7 +38,7 @@ const AdminLayout = ({ children }) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-zinc-950 text-white selection:bg-indigo-500 selection:text-white">
+    <div className="flex min-h-screen bg-[#131810] text-white selection:bg-[#CCFF00]/30 selection:text-white">
       {/* Sidebar */}
       <aside className={`
         fixed lg:sticky top-0 left-0 z-50 w-[280px] h-screen bg-black/40 backdrop-blur-3xl border-r border-white/5 transition-transform duration-300
@@ -46,12 +46,12 @@ const AdminLayout = ({ children }) => {
       `}>
         <div className="flex flex-col h-full p-8">
           <div className="flex items-center gap-4 mb-12 px-2">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-2xl shadow-indigo-600/20">
-              <Shield className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-2xl bg-[#CCFF00] flex items-center justify-center shadow-2xl shadow-[#CCFF00]/15">
+              <Shield className="w-6 h-6 text-[#131810]" />
             </div>
             <div>
               <h2 className="text-xl font-black tracking-tighter uppercase font-syne">Command</h2>
-              <p className="text-[9px] font-black text-indigo-400 uppercase tracking-[0.3em]">Administrator</p>
+              <p className="text-[9px] font-black text-[#CCFF00] uppercase tracking-[0.3em]">Administrator</p>
             </div>
           </div>
 
@@ -65,7 +65,7 @@ const AdminLayout = ({ children }) => {
           <div className="mt-auto pt-8 border-t border-white/5">
             <div className="flex items-center gap-4 px-4 mb-8">
               <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                <Shield className="w-5 h-5 text-indigo-400" />
+                <Shield className="w-5 h-5 text-[#CCFF00]" />
               </div>
               <div>
                 <p className="text-[11px] font-black uppercase tracking-tight">Root Admin</p>
