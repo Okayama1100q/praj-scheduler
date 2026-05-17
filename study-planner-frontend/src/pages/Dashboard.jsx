@@ -321,7 +321,8 @@ const Dashboard = () => {
       </div>
 
       <div className="flex-1 min-h-0 relative pb-4 overflow-hidden">
-        <div className="grid grid-cols-7 lg:grid-cols-7 gap-1 lg:gap-2 mb-2 lg:mb-4 pr-1 lg:pr-0 lg:pl-16">
+        {/* Desktop-only Header */}
+        <div className="hidden lg:grid grid-cols-7 gap-1 lg:gap-2 mb-2 lg:mb-4 pr-1 lg:pr-0 lg:pl-16">
           {days.map((day) => (
             <div key={day} className="text-center">
               <h3 className="text-[7px] lg:text-[10px] font-black text-white/20 uppercase tracking-[0.1em] lg:tracking-[0.2em] font-syne">
@@ -332,7 +333,103 @@ const Dashboard = () => {
           ))}
         </div>
 
-        <div className="flex h-full min-h-0">
+        {/* Mobile Nothing Phone (3a) Layout */}
+        <div className="lg:hidden flex flex-col h-full min-h-0 gap-3">
+          {/* Day Selector Pills Widget */}
+          <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-none snap-x">
+            {days.map((day) => (
+              <button
+                key={day}
+                onClick={() => setSelectedDay(day)}
+                className={`snap-center px-4 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-1.5 ${
+                  selectedDay === day 
+                    ? 'bg-white text-black font-black shadow-2xl scale-[1.03]' 
+                    : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10 hover:text-white/60'
+                }`}
+              >
+                {day.substring(0, 3)}
+                {selectedDay === day && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF453A]" />
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Timeline List Widget */}
+          <div className="flex-1 overflow-y-auto space-y-3 pr-1 pb-20">
+            {schedules.filter(s => s.day === selectedDay).length === 0 ? (
+              <div className="h-48 rounded-[2rem] border border-white/5 bg-white/[0.01] backdrop-blur-md flex flex-col items-center justify-center text-white/20 gap-3">
+                <BookOpen className="w-8 h-8 opacity-20" />
+                <p className="text-[10px] uppercase tracking-widest font-black font-mono">No Plans Scheduled</p>
+                <button
+                  onClick={() => openAddModal(selectedDay)}
+                  className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[9px] font-black text-white/60 uppercase tracking-widest hover:bg-white hover:text-black transition-all"
+                >
+                  Create Plan
+                </button>
+              </div>
+            ) : (
+              schedules
+                .filter(s => s.day === selectedDay)
+                .sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''))
+                .map((schedule) => {
+                  const isCompleted = completedSessions.includes(schedule._id);
+                  const isMissed = !isCompleted && isScheduleMissed(schedule);
+                  return (
+                    <motion.div 
+                      key={schedule._id}
+                      onClick={() => !isCompleted && !isMissed && handleStartStudy(schedule._id)}
+                      whileTap={{ scale: 0.98 }}
+                      className={`p-4 rounded-[2rem] border transition-all flex justify-between items-center relative overflow-hidden group ${
+                        isCompleted 
+                          ? 'bg-emerald-500/10 border-emerald-500/20' 
+                          : isMissed
+                            ? 'bg-red-500/10 border-red-500/20 opacity-60'
+                            : 'bg-white/5 border-white/10 active:bg-white/10'
+                      }`}
+                    >
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[9px] font-mono font-bold text-white/40 tracking-wider">
+                            {schedule.startTime} - {schedule.endTime}
+                          </span>
+                          <span className={`w-1 h-1 rounded-full ${isCompleted ? 'bg-emerald-500' : isMissed ? 'bg-red-500' : 'bg-indigo-500'}`} />
+                        </div>
+                        <h4 className="text-xs lg:text-sm font-bold text-white font-syne truncate tracking-tight">{schedule.subject}</h4>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 z-10">
+                        {isCompleted && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
+                        {isMissed && <XCircle className="w-4 h-4 text-red-500" />}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteSchedule(schedule._id);
+                          }}
+                          className="p-2 hover:bg-red-500/20 rounded-xl text-white/30 hover:text-red-400 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </motion.div>
+                  );
+                })
+            )}
+
+            {schedules.filter(s => s.day === selectedDay).length > 0 && (
+              <button 
+                onClick={() => openAddModal(selectedDay)}
+                className="w-full py-4 rounded-[2rem] bg-white/5 border border-dashed border-white/10 flex items-center justify-center gap-2 text-white/40 hover:text-white hover:border-white/20 transition-all active:scale-[0.99]"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span className="text-[9px] font-black uppercase tracking-widest">Add Plan</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Desktop-only Body Grid */}
+        <div className="hidden lg:flex h-full min-h-0">
           <div className="hidden lg:block relative w-16 flex-shrink-0 h-full">
             {times.map((time) => {
               const [h, m] = time.split(':').map(Number);
