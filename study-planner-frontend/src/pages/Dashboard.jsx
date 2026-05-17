@@ -216,36 +216,45 @@ const F1Background = () => (
     <div className="speed-stripe-white left-[65%] animate-[speed-line-white_8s_linear_infinite_0.5s]" />
     <div className="speed-stripe-red left-[85%] animate-[speed-line-red_4s_linear_infinite_2s]" />
 
+    {/* Topographical Contour lines */}
+    <svg className="absolute inset-0 w-full h-full opacity-[0.05]" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M-100 100 C 300 200, 400 -50, 800 150 C 1200 350, 1000 600, 1600 500" stroke="#CCFF00" strokeWidth="1.5" />
+      <path d="M-50 150 C 350 250, 450 0, 850 200 C 1250 400, 1050 650, 1650 550" stroke="#CCFF00" strokeWidth="1.5" />
+      <path d="M0 200 C 400 300, 500 50, 900 250 C 1300 450, 1100 700, 1700 600" stroke="#CCFF00" strokeWidth="1.5" strokeDasharray="5 5" />
+      <path d="M200 800 C 500 600, 800 900, 1100 700 C 1400 500, 1200 1000, 1600 800" stroke="#CCFF00" strokeWidth="1.5" />
+      <path d="M250 850 C 550 650, 850 950, 1150 750 C 1450 550, 1250 1050, 1650 850" stroke="#CCFF00" strokeWidth="1.5" />
+    </svg>
+
     {/* Racetrack curbs/lines at the bottom */}
-    <div className="absolute bottom-10 left-0 w-full h-1 bg-[repeating-linear-gradient(45deg,#ff453a,#ff453a_10px,#fff_10px,#fff_20px)] shadow-[0_0_15px_#ff453a55]" />
+    <div className="absolute bottom-10 left-0 w-full h-1 bg-[repeating-linear-gradient(45deg,#ccff00,#ccff00_10px,#fff_10px,#fff_20px)] shadow-[0_0_15px_#ccff0055]" />
 
     {/* Zooming F1 Car */}
     <div className="absolute bottom-[28px] left-0 w-full animate-f1-zoom">
       <svg className="w-[140px] h-[45px]" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
         {/* Rear wing */}
-        <path d="M5 8H12V14H5V8Z" fill="#FF453A" />
+        <path d="M5 8H12V14H5V8Z" fill="#CCFF00" />
         <path d="M10 8L7 28H11L14 8H10Z" fill="#E5E5EA" />
         
         {/* Rear Wheel */}
         <g className="f1-wheel" style={{ transformOrigin: '25px 28px' }}>
-          <circle cx="25" cy="28" r="9" fill="#151515" stroke="#FF453A" strokeWidth="2" />
+          <circle cx="25" cy="28" r="9" fill="#151515" stroke="#CCFF00" strokeWidth="2" />
           <circle cx="25" cy="28" r="4" fill="#CCCCCC" />
           <line x1="25" y1="19" x2="25" y2="37" stroke="#ffffff33" strokeWidth="1.5" />
           <line x1="16" y1="28" x2="34" y2="28" stroke="#ffffff33" strokeWidth="1.5" />
         </g>
 
         {/* Chassis Body */}
-        <path d="M12 28C24 28 32 20 46 20C60 20 75 25 100 25C106 25 110 22 113 28H12Z" fill="#FF453A" />
+        <path d="M12 28C24 28 32 20 46 20C60 20 75 25 100 25C106 25 110 22 113 28H12Z" fill="#CCFF00" />
         <path d="M42 20C45 13 52 13 56 20H42Z" fill="#111" />
         <circle cx="49" cy="16" r="3" fill="#FFF" /> {/* Helmet */}
         
         {/* Front nose / Wing */}
-        <path d="M96 25L112 28H96V25Z" fill="#FF453A" />
+        <path d="M96 25L112 28H96V25Z" fill="#CCFF00" />
         <path d="M108 28H118V30H108V28Z" fill="#CCCCCC" />
 
         {/* Front Wheel */}
         <g className="f1-wheel" style={{ transformOrigin: '95px 28px' }}>
-          <circle cx="95" cy="28" r="8" fill="#151515" stroke="#FF453A" strokeWidth="2" />
+          <circle cx="95" cy="28" r="8" fill="#151515" stroke="#CCFF00" strokeWidth="2" />
           <circle cx="95" cy="28" r="3.5" fill="#CCCCCC" />
           <line x1="95" y1="20" x2="95" y2="36" stroke="#ffffff33" strokeWidth="1.5" />
           <line x1="87" y1="28" x2="103" y2="28" stroke="#ffffff33" strokeWidth="1.5" />
@@ -253,7 +262,7 @@ const F1Background = () => (
 
         {/* Jet flame exhaust */}
         <path d="M1 28L8 26L6 29L1 28Z" fill="#FF9500" />
-        <path d="M-5 28L4 27L2 29L-5 28Z" fill="#FF3B30" opacity="0.6" />
+        <path d="M-5 28L4 27L2 29L-5 28Z" fill="#CCFF00" opacity="0.6" />
       </svg>
     </div>
   </div>
@@ -388,18 +397,18 @@ const Dashboard = () => {
         
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-6 lg:mb-8 gap-4 flex-shrink-0 pt-4">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-            <h2 className="text-[10px] lg:text-[11px] font-black text-[#FF453A] uppercase tracking-[0.3em] font-mono flex items-center gap-1.5 pt-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#FF453A] animate-pulse" />
+            <h2 className="text-[10px] lg:text-[11px] font-black text-[#CCFF00] uppercase tracking-[0.3em] font-mono flex items-center gap-1.5 pt-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#CCFF00] animate-pulse" />
               Live Telemetry Grid
             </h2>
           </motion.div>
           <div className="flex gap-2 w-full sm:w-auto items-center">
             <button 
               onClick={handleClearAll}
-              className="flex items-center justify-center gap-2 h-10 lg:h-12 rounded-xl lg:rounded-2xl border border-[#FF453A]/30 bg-[#FF453A]/10 text-[#FF453A] hover:bg-[#FF453A]/20 active:scale-[0.98] font-mono transition-all duration-300 w-10 sm:w-auto px-0 sm:px-5"
+              className="flex items-center justify-center gap-2 h-10 lg:h-12 rounded-xl lg:rounded-2xl border border-[#CCFF00]/30 bg-[#CCFF00]/10 text-[#CCFF00] hover:bg-[#CCFF00]/20 active:scale-[0.98] font-mono transition-all duration-300 w-10 sm:w-auto px-0 sm:px-5"
               title="Delete Everything"
             >
-              <Trash2 className="w-4 h-4 text-[#FF453A]" />
+              <Trash2 className="w-4 h-4 text-[#CCFF00]" />
               <span className="hidden sm:inline text-[9px] lg:text-xs font-black uppercase tracking-widest">Delete Everything</span>
             </button>
             <button 
@@ -435,13 +444,13 @@ const Dashboard = () => {
                 onClick={() => setSelectedDay(day)}
                 className={`snap-center px-4 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-1.5 ${
                   selectedDay === day 
-                    ? 'bg-[#FF453A] text-white font-black shadow-[0_0_15px_rgba(255,69,58,0.4)] scale-[1.03]' 
+                    ? 'bg-[#CCFF00] text-black font-black shadow-[0_0_15px_rgba(204,255,0,0.3)] scale-[1.03]' 
                     : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10 hover:text-white/60'
                 }`}
               >
                 {day.substring(0, 3)}
                 {selectedDay === day && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF453A]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#131810]" />
                 )}
               </button>
             ))}

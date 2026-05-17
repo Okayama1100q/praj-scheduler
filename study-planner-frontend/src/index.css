@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&family=Inter:wght@300;400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=Outfit:wght@300;400;600;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,11 +6,11 @@
 
 :root {
 
-  --bg-primary: #121216;
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --accent-indigo: #e81c23;
-  --accent-purple: #ff453a;
+  --bg-primary: #1A2017;
+  --glass-bg: rgba(255, 255, 255, 0.02);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --accent-indigo: #CCFF00;
+  --accent-purple: #D4FF00;
   --text-dim: rgba(255, 255, 255, 0.4);
 }
 
@@ -21,18 +21,18 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', sans-serif;
   background: 
-    radial-gradient(circle at 15% 15%, rgba(232, 28, 35, 0.12) 0%, transparent 40%),
-    radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.05) 0%, transparent 40%),
-    linear-gradient(135deg, #141419 0%, #0d0d10 60%, #1e090b 100%) !important;
+    radial-gradient(circle at 10% 20%, rgba(204, 255, 0, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 40%),
+    #131810 !important;
   color: white;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
 .font-syne {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Playfair Display', serif;
 }
 
 /* Mesh Background */
@@ -178,9 +178,9 @@ body {
 }
 
 .nav-link-active {
-  background: #E81C23 !important;
-  color: white !important;
-  box-shadow: 0 10px 25px rgba(232, 28, 35, 0.35);
+  background: #CCFF00 !important;
+  color: #131810 !important;
+  box-shadow: 0 10px 25px rgba(204, 255, 0, 0.25);
 }
 
 .nav-link-inactive {
@@ -284,7 +284,7 @@ body {
   top: 0;
   width: 2px;
   height: 150px;
-  background: linear-gradient(to bottom, transparent, #ff453a, transparent);
+  background: linear-gradient(to bottom, transparent, #CCFF00, transparent);
 }
 
 .speed-stripe-white {
@@ -297,9 +297,9 @@ body {
 
 .bg-racing-mesh {
   background: 
-    radial-gradient(circle at 15% 15%, rgba(232, 28, 35, 0.12) 0%, transparent 40%),
-    radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.05) 0%, transparent 40%),
-    linear-gradient(135deg, #141419 0%, #0d0d10 60%, #1e090b 100%) !important;
+    radial-gradient(circle at 10% 20%, rgba(204, 255, 0, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 40%),
+    #131810 !important;
   position: relative;
 }
 

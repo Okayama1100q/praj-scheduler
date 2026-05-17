@@ -87,12 +87,12 @@ const Layout = ({ children }) => {
         <div className="flex flex-col h-full pt-32 lg:pt-12 pb-12 px-8">
 
           <div className="flex items-center gap-4 mb-16 px-2">
-            <div className="w-10 h-10 rounded-2xl bg-[#E81C23] flex items-center justify-center shadow-2xl shadow-[#E81C23]/25">
-              <Zap className="w-5 h-5 text-white animate-pulse" strokeWidth={3} />
+            <div className="w-10 h-10 rounded-2xl bg-[#CCFF00] flex items-center justify-center shadow-2xl shadow-[#CCFF00]/25">
+              <Zap className="w-5 h-5 text-[#131810] animate-pulse" strokeWidth={3} />
             </div>
             <h2 className="text-xl font-black tracking-tighter text-white font-syne uppercase leading-none">
               Praj<br />
-              <span className="text-[#E81C23]">Scheduler</span>
+              <span className="text-[#CCFF00]">Scheduler</span>
             </h2>
           </div>
 
@@ -103,16 +103,16 @@ const Layout = ({ children }) => {
 
           {/* Animated F1 Sidebar Widget */}
           <div className="hidden lg:flex flex-col items-center justify-center my-6 p-4 rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-md relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#E81C23] to-transparent opacity-40" />
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#CCFF00] to-transparent opacity-40" />
             
-            <p className="text-[7px] font-bold text-[#E81C23] tracking-[0.25em] uppercase mb-3 font-mono">
+            <p className="text-[7px] font-bold text-[#CCFF00] tracking-[0.25em] uppercase mb-3 font-mono">
               F1 telemetry status
             </p>
             
             {/* Racetrack curve */}
             <div className="w-full h-10 relative bg-black/40 rounded-xl overflow-hidden flex items-center border border-white/5">
-              <div className="absolute top-0 left-0 w-full h-0.5 bg-[repeating-linear-gradient(90deg,#e81c23,#e81c23_5px,#fff_5px,#fff_10px)] opacity-20" />
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[repeating-linear-gradient(90deg,#e81c23,#e81c23_5px,#fff_5px,#fff_10px)] opacity-20" />
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-[repeating-linear-gradient(90deg,#ccff00,#ccff00_5px,#fff_5px,#fff_10px)] opacity-20" />
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[repeating-linear-gradient(90deg,#ccff00,#ccff00_5px,#fff_5px,#fff_10px)] opacity-20" />
               
               {/* Drifting grid backdrop */}
               <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px)] bg-[size:10px_10px]" />
@@ -120,13 +120,13 @@ const Layout = ({ children }) => {
               {/* Zooming Mini F1 Car */}
               <div className="absolute w-full animate-[f1-sidebar-zoom_6s_linear_infinite]">
                 <svg className="w-8 h-6" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle className="f1-wheel" cx="25" cy="28" r="9" fill="#111" stroke="#E81C23" strokeWidth="2" style={{ transformOrigin: '25px 28px' }} />
+                  <circle className="f1-wheel" cx="25" cy="28" r="9" fill="#111" stroke="#CCFF00" strokeWidth="2" style={{ transformOrigin: '25px 28px' }} />
                   <circle cx="25" cy="28" r="4" fill="#FFF" />
-                  <path d="M5 8H12V14H5V8Z" fill="#E81C23" />
+                  <path d="M5 8H12V14H5V8Z" fill="#CCFF00" />
                   <path d="M10 8L7 28H11L14 8H10Z" fill="#FFF" />
-                  <path d="M12 28C24 28 32 20 46 20C60 20 75 25 100 25C106 25 110 22 113 28H12Z" fill="#E81C23" />
+                  <path d="M12 28C24 28 32 20 46 20C60 20 75 25 100 25C106 25 110 22 113 28H12Z" fill="#CCFF00" />
                   <circle cx="49" cy="16" r="3" fill="#FFF" />
-                  <circle className="f1-wheel" cx="95" cy="28" r="8" fill="#111" stroke="#E81C23" strokeWidth="2" style={{ transformOrigin: '95px 28px' }} />
+                  <circle className="f1-wheel" cx="95" cy="28" r="8" fill="#111" stroke="#CCFF00" strokeWidth="2" style={{ transformOrigin: '95px 28px' }} />
                   <circle cx="95" cy="28" r="3.5" fill="#FFF" />
                   <path d="M1 28L8 26L6 29L1 28Z" fill="#FF9500" />
                 </svg>

@@ -174,7 +174,7 @@ const StudyMode = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--bg-primary)]">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-4" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#CCFF00] mb-4" />
         <p className="text-sm font-medium text-white/40 uppercase tracking-widest">Warping to Focus Chamber...</p>
       </div>
     );
@@ -261,7 +261,7 @@ const StudyMode = () => {
           flex-[1.5] flex flex-col items-center justify-center p-6 lg:p-12 bg-black/40 relative overflow-hidden
           ${activeView === 'timer' ? 'flex' : 'hidden lg:flex'}
         `}>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] lg:w-[400px] h-[300px] lg:h-[400px] bg-indigo-500/10 blur-[120px] rounded-full -z-1" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] lg:w-[400px] h-[300px] lg:h-[400px] bg-[#CCFF00]/5 blur-[120px] rounded-full -z-1" />
 
           <div className="text-center w-full max-w-sm relative z-10">
             <p className="text-[8px] lg:text-[10px] font-black text-white/20 mb-4 lg:mb-8 tracking-[0.4em] uppercase">
@@ -281,14 +281,14 @@ const StudyMode = () => {
                 <div className="mt-8 w-full px-2">
                   <div className="relative w-full h-8 bg-black/60 border border-white/5 rounded-full overflow-hidden flex items-center px-4">
                     {/* Curb Stripes */}
-                    <div className="absolute top-0 left-0 w-full h-1 bg-[repeating-linear-gradient(90deg,#ff453a,#ff453a_10px,#fff_10px,#fff_20px)] opacity-30" />
-                    <div className="absolute bottom-0 left-0 w-full h-1 bg-[repeating-linear-gradient(90deg,#ff453a,#ff453a_10px,#fff_10px,#fff_20px)] opacity-30" />
+                    <div className="absolute top-0 left-0 w-full h-1 bg-[repeating-linear-gradient(90deg,#ccff00,#ccff00_10px,#fff_10px,#fff_20px)] opacity-30" />
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-[repeating-linear-gradient(90deg,#ccff00,#ccff00_10px,#fff_10px,#fff_20px)] opacity-30" />
 
                     {/* Racetrack center line */}
                     <div className="w-full h-1.5 bg-neutral-900 rounded-full relative">
                       {/* Neon speed trail */}
                       <div 
-                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-600/10 to-[#FF453A] rounded-full shadow-[0_0_10px_#ff453a]" 
+                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-lime-600/10 to-[#CCFF00] rounded-full shadow-[0_0_10px_#ccff00]" 
                         style={{ width: `${totalDuration && timeLeft !== null ? ((totalDuration - timeLeft) / totalDuration) * 100 : 0}%` }}
                       />
                       
@@ -301,13 +301,13 @@ const StudyMode = () => {
                         }}
                       >
                         <svg className="w-9 h-8" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <circle className="f1-wheel" cx="25" cy="28" r="9" fill="#111" stroke="#FF453A" strokeWidth="2" style={{ transformOrigin: '25px 28px' }} />
+                          <circle className="f1-wheel" cx="25" cy="28" r="9" fill="#111" stroke="#CCFF00" strokeWidth="2" style={{ transformOrigin: '25px 28px' }} />
                           <circle cx="25" cy="28" r="4" fill="#FFF" />
-                          <path d="M5 8H12V14H5V8Z" fill="#FF453A" />
+                          <path d="M5 8H12V14H5V8Z" fill="#CCFF00" />
                           <path d="M10 8L7 28H11L14 8H10Z" fill="#FFF" />
-                          <path d="M12 28C24 28 32 20 46 20C60 20 75 25 100 25C106 25 110 22 113 28H12Z" fill="#FF453A" />
+                          <path d="M12 28C24 28 32 20 46 20C60 20 75 25 100 25C106 25 110 22 113 28H12Z" fill="#CCFF00" />
                           <circle cx="49" cy="16" r="3" fill="#FFF" />
-                          <circle className="f1-wheel" cx="95" cy="28" r="8" fill="#111" stroke="#FF453A" strokeWidth="2" style={{ transformOrigin: '95px 28px' }} />
+                          <circle className="f1-wheel" cx="95" cy="28" r="8" fill="#111" stroke="#CCFF00" strokeWidth="2" style={{ transformOrigin: '95px 28px' }} />
                           <circle cx="95" cy="28" r="3.5" fill="#FFF" />
                           <path d="M1 28L8 26L6 29L1 28Z" fill="#FF9500" />
                         </svg>
@@ -334,7 +334,7 @@ const StudyMode = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 1.1 }}
                   onClick={handleStartSession}
-                  className="w-full h-16 lg:h-20 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl lg:rounded-3xl flex items-center justify-center gap-4 group transition-all shadow-[0_20px_50px_rgba(79,70,229,0.3)]"
+                  className="w-full h-16 lg:h-20 bg-[#CCFF00] hover:opacity-90 text-[#131810] rounded-2xl lg:rounded-3xl flex items-center justify-center gap-4 group transition-all shadow-[0_20px_50px_rgba(204,255,0,0.2)]"
                 >
                   <Play className="w-5 h-5 lg:w-6 lg:h-6 fill-white" />
                   <span className="text-sm lg:text-lg font-black uppercase tracking-widest">Start Focus</span>
