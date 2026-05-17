@@ -302,3 +302,21 @@ body {
     linear-gradient(135deg, #141419 0%, #0d0d10 60%, #1e090b 100%) !important;
   position: relative;
 }
+
+/* ==========================================================================
+   SINGLE-PAGE DESKTOP VIEWPORT LOCKS & SIDEBAR ZOOM
+   ========================================================================== */
+
+@keyframes f1-sidebar-zoom {
+  0% { transform: translateX(-50px); }
+  35% { transform: translateX(210px); }
+  100% { transform: translateX(210px); }
+}
+
+@media (min-width: 1024px) {
+  html, body, #root {
+    overflow-y: hidden !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+  }
+}

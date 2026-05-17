@@ -269,7 +269,7 @@ const Dashboard = () => {
   const [selectedDay, setSelectedDay] = useState('Monday');
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const times = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '00:00', '02:00'];
+  const times = ['12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '00:00'];
 
   const fetchData = async () => {
     try {
@@ -383,7 +383,7 @@ const Dashboard = () => {
 
   return (
     <div className="bg-racing-mesh min-h-screen text-white relative overflow-hidden font-syne">
-      <div className="max-w-[1400px] mx-auto px-4 lg:px-0 h-screen flex flex-col relative z-10">
+      <div className="max-w-[1400px] mx-auto px-4 lg:px-0 h-[calc(100vh-64px)] lg:h-[calc(100vh-100px)] flex flex-col relative z-10 lg:pb-12">
         <F1Background />
         
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-6 lg:mb-8 gap-4 flex-shrink-0 pt-4">
@@ -526,9 +526,9 @@ const Dashboard = () => {
             {times.map((time) => {
               const [h, m] = time.split(':').map(Number);
               let adjustedH = h;
-              if (h < 8) adjustedH += 24;
-              const totalMins = (adjustedH * 60 + m) - (8 * 60);
-              const percentage = (totalMins / 1080) * 100;
+              if (h < 12) adjustedH += 24;
+              const totalMins = (adjustedH * 60 + m) - (12 * 60);
+              const percentage = (totalMins / 720) * 100;
               return (
                 <div 
                   key={time} 
@@ -548,9 +548,9 @@ const Dashboard = () => {
               const calculateTop = (timeStr) => {
                 if (!timeStr) return 0;
                 let [h, m] = timeStr.split(':').map(Number);
-                if (h < 8) h += 24; // Progression past midnight (00:xx, 01:xx, 02:xx -> 24:xx, 25:xx, 26:xx)
-                const totalMins = (h * 60 + m) - (8 * 60);
-                const percentage = (totalMins / 1080) * 100;
+                if (h < 12) h += 24; // Progression past midnight
+                const totalMins = (h * 60 + m) - (12 * 60);
+                const percentage = (totalMins / 720) * 100;
                 return Math.max(0, Math.min(percentage, 100));
               };
 
