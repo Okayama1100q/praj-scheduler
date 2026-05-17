@@ -269,7 +269,7 @@ const Dashboard = () => {
   const [selectedDay, setSelectedDay] = useState('Monday');
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const times = ['12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '00:00'];
+  const times = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '00:00'];
 
   const fetchData = async () => {
     try {
@@ -393,7 +393,7 @@ const Dashboard = () => {
               Live Telemetry Grid
             </h2>
           </motion.div>
-          <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
             <button 
               onClick={handleClearAll}
               className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 lg:px-5 h-10 lg:h-12 text-[9px] lg:text-xs font-black uppercase tracking-widest transition-all duration-300 rounded-xl lg:rounded-2xl border border-[#FF453A]/30 bg-[#FF453A]/10 text-[#FF453A] hover:bg-[#FF453A]/20 active:scale-[0.98] font-mono"
@@ -523,15 +523,15 @@ const Dashboard = () => {
         {/* Desktop-only Body Grid */}
         <div className="hidden lg:flex h-full min-h-0">
           <div className="hidden lg:block relative w-16 flex-shrink-0 h-full">
-            {times.map((time) => {
+            {times.map((time, idx) => {
               const [h, m] = time.split(':').map(Number);
               let adjustedH = h;
-              if (h < 12) adjustedH += 24;
-              const totalMins = (adjustedH * 60 + m) - (12 * 60);
-              const percentage = (totalMins / 720) * 100;
+              if (idx === times.length - 1) adjustedH = 24;
+              const totalMins = adjustedH * 60 + m;
+              const percentage = (totalMins / 1440) * 100;
               return (
                 <div 
-                  key={time} 
+                  key={idx} 
                   className="absolute text-[10px] font-black text-white/20 font-mono tracking-tighter text-right pr-4 w-full"
                   style={{ top: `${percentage}%`, transform: 'translateY(-50%)' }}
                 >
@@ -548,9 +548,8 @@ const Dashboard = () => {
               const calculateTop = (timeStr) => {
                 if (!timeStr) return 0;
                 let [h, m] = timeStr.split(':').map(Number);
-                if (h < 12) h += 24; // Progression past midnight
-                const totalMins = (h * 60 + m) - (12 * 60);
-                const percentage = (totalMins / 720) * 100;
+                const totalMins = h * 60 + m;
+                const percentage = (totalMins / 1440) * 100;
                 return Math.max(0, Math.min(percentage, 100));
               };
 
