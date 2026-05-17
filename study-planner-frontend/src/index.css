@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&family=Inter:wght@300;400;600;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,11 +6,11 @@
 
 :root {
 
-  --bg-primary: #050505;
+  --bg-primary: #121216;
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
-  --accent-indigo: #6366f1;
-  --accent-purple: #a855f7;
+  --accent-indigo: #e81c23;
+  --accent-purple: #ff453a;
   --text-dim: rgba(255, 255, 255, 0.4);
 }
 
@@ -22,14 +22,17 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: var(--bg-primary);
+  background: 
+    radial-gradient(circle at 15% 15%, rgba(232, 28, 35, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.05) 0%, transparent 40%),
+    linear-gradient(135deg, #141419 0%, #0d0d10 60%, #1e090b 100%) !important;
   color: white;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
 .font-syne {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Orbitron', sans-serif;
 }
 
 /* Mesh Background */
@@ -294,8 +297,8 @@ body {
 
 .bg-racing-mesh {
   background: 
-    radial-gradient(circle at 15% 20%, rgba(255, 69, 58, 0.07) 0%, transparent 40%),
-    radial-gradient(circle at 85% 75%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
-    #050507;
+    radial-gradient(circle at 15% 15%, rgba(232, 28, 35, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.05) 0%, transparent 40%),
+    linear-gradient(135deg, #141419 0%, #0d0d10 60%, #1e090b 100%) !important;
   position: relative;
 }
