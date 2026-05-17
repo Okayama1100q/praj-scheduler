@@ -203,6 +203,96 @@ const CreateScheduleModal = ({ isOpen, onClose, onSuccess, preselectedDay }) => 
   );
 };
 
+const F1Background = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none opacity-40">
+    <style>{`
+      @keyframes f1-zoom-anim {
+        0% { transform: translateX(-160px); }
+        15% { transform: translateX(105vw); }
+        100% { transform: translateX(105vw); }
+      }
+      @keyframes grid-drift-anim {
+        from { background-position: 0 0; }
+        to { background-position: 40px 40px; }
+      }
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      .animate-f1-zoom {
+        animation: f1-zoom-anim 10s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+        animation-delay: 1.5s;
+      }
+      .animate-grid-drift {
+        animation: grid-drift-anim 12s linear infinite;
+      }
+      .f1-wheel {
+        transform-origin: center;
+        animation: spin 0.1s linear infinite;
+      }
+      .bg-carbon {
+        background-color: #050507;
+        background-image: 
+          linear-gradient(45deg, #09090b 25%, transparent 25%), 
+          linear-gradient(-45deg, #09090b 25%, transparent 25%), 
+          linear-gradient(45deg, transparent 75%, #09090b 75%), 
+          linear-gradient(-45deg, transparent 75%, #09090b 75%);
+        background-size: 8px 8px;
+        background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #ffffff 40%, #ff453a 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    `}</style>
+    
+    {/* Animated grid background */}
+    <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] animate-grid-drift" />
+    
+    {/* Racetrack curbs/lines at the bottom */}
+    <div className="absolute bottom-10 left-0 w-full h-1 bg-[repeating-linear-gradient(45deg,#ff453a,#ff453a_10px,#fff_10px,#fff_20px)] shadow-[0_0_15px_#ff453a55]" />
+
+    {/* Zooming F1 Car */}
+    <div className="absolute bottom-[28px] left-0 w-full animate-f1-zoom">
+      <svg className="w-[140px] h-[45px]" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Rear wing */}
+        <path d="M5 8H12V14H5V8Z" fill="#FF453A" />
+        <path d="M10 8L7 28H11L14 8H10Z" fill="#E5E5EA" />
+        
+        {/* Rear Wheel */}
+        <g className="f1-wheel" style={{ transformOrigin: '25px 28px' }}>
+          <circle cx="25" cy="28" r="9" fill="#151515" stroke="#FF453A" strokeWidth="2" />
+          <circle cx="25" cy="28" r="4" fill="#CCCCCC" />
+          <line x1="25" y1="19" x2="25" y2="37" stroke="#ffffff33" strokeWidth="1.5" />
+          <line x1="16" y1="28" x2="34" y2="28" stroke="#ffffff33" strokeWidth="1.5" />
+        </g>
+
+        {/* Chassis Body */}
+        <path d="M12 28C24 28 32 20 46 20C60 20 75 25 100 25C106 25 110 22 113 28H12Z" fill="#FF453A" />
+        <path d="M42 20C45 13 52 13 56 20H42Z" fill="#111" />
+        <circle cx="49" cy="16" r="3" fill="#FFF" /> {/* Helmet */}
+        
+        {/* Front nose / Wing */}
+        <path d="M96 25L112 28H96V25Z" fill="#FF453A" />
+        <path d="M108 28H118V30H108V28Z" fill="#CCCCCC" />
+
+        {/* Front Wheel */}
+        <g className="f1-wheel" style={{ transformOrigin: '95px 28px' }}>
+          <circle cx="95" cy="28" r="8" fill="#151515" stroke="#FF453A" strokeWidth="2" />
+          <circle cx="95" cy="28" r="3.5" fill="#CCCCCC" />
+          <line x1="95" y1="20" x2="95" y2="36" stroke="#ffffff33" strokeWidth="1.5" />
+          <line x1="87" y1="28" x2="103" y2="28" stroke="#ffffff33" strokeWidth="1.5" />
+        </g>
+
+        {/* Jet flame exhaust */}
+        <path d="M1 28L8 26L6 29L1 28Z" fill="#FF9500" />
+        <path d="M-5 28L4 27L2 29L-5 28Z" fill="#FF3B30" opacity="0.6" />
+      </svg>
+    </div>
+  </div>
+);
+
 const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -326,30 +416,36 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto px-2 lg:px-0 h-screen flex flex-col">
-      <div className="flex flex-row justify-between items-end mb-6 lg:mb-8 gap-4 flex-shrink-0">
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-          <h1 className="text-3xl lg:text-5xl font-black text-white mb-1 lg:mb-2 tracking-tighter font-syne uppercase gradient-text">Planner</h1>
-          <p className="text-white/40 font-medium text-[10px] lg:text-sm uppercase tracking-widest">Week Architecture</p>
-        </motion.div>
-        <div className="flex gap-2 lg:gap-3">
-          <button 
-            onClick={handleClearAll}
-            className="flex items-center gap-2 px-3 lg:px-5 h-10 lg:h-12 text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all duration-300 rounded-xl lg:rounded-2xl border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 active:scale-[0.98]"
-            title="Delete Everything"
-          >
-            <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-red-400" />
-            <span className="hidden sm:inline">Delete Everything</span>
-          </button>
-          <button 
-            onClick={() => openAddModal(selectedDay || 'Monday')}
-            className="premium-button flex items-center gap-2 lg:gap-3 px-4 lg:px-8 h-10 lg:h-12 text-[10px] lg:text-xs"
-          >
-            <Plus className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-            <span>New Plan</span>
-          </button>
+    <div className="bg-carbon min-h-screen text-white relative overflow-hidden font-syne">
+      <div className="max-w-[1400px] mx-auto px-4 lg:px-0 h-screen flex flex-col relative z-10">
+        <F1Background />
+        
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-6 lg:mb-8 gap-4 flex-shrink-0 pt-4">
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+            <h1 className="text-4xl lg:text-6xl font-black text-white mb-1 lg:mb-2 tracking-tighter font-syne uppercase gradient-text flex items-center gap-2">
+              Planner
+              <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#FF453A] animate-pulse" />
+            </h1>
+            <p className="text-white/40 font-semibold text-[9px] lg:text-xs uppercase tracking-[0.2em] font-mono">Telemetry Week Architecture</p>
+          </motion.div>
+          <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
+            <button 
+              onClick={handleClearAll}
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 lg:px-5 h-10 lg:h-12 text-[9px] lg:text-xs font-black uppercase tracking-widest transition-all duration-300 rounded-xl lg:rounded-2xl border border-[#FF453A]/30 bg-[#FF453A]/10 text-[#FF453A] hover:bg-[#FF453A]/20 active:scale-[0.98] font-mono"
+              title="Delete Everything"
+            >
+              <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-[#FF453A]" />
+              <span>Delete Everything</span>
+            </button>
+            <button 
+              onClick={() => openAddModal(selectedDay || 'Monday')}
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 lg:px-8 h-10 lg:h-12 text-[9px] lg:text-xs font-black uppercase tracking-widest transition-all duration-300 rounded-xl lg:rounded-2xl bg-white text-black hover:bg-neutral-200 active:scale-[0.98] font-mono shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+            >
+              <Plus className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+              <span>New Plan</span>
+            </button>
+          </div>
         </div>
-      </div>
 
       <div className="flex-1 min-h-0 relative pb-4 overflow-hidden">
         {/* Desktop-only Header */}
@@ -374,7 +470,7 @@ const Dashboard = () => {
                 onClick={() => setSelectedDay(day)}
                 className={`snap-center px-4 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-1.5 ${
                   selectedDay === day 
-                    ? 'bg-white text-black font-black shadow-2xl scale-[1.03]' 
+                    ? 'bg-[#FF453A] text-white font-black shadow-[0_0_15px_rgba(255,69,58,0.4)] scale-[1.03]' 
                     : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10 hover:text-white/60'
                 }`}
               >
@@ -556,6 +652,8 @@ const Dashboard = () => {
         onSuccess={fetchData}
         preselectedDay={selectedDay}
       />
+      </div>
+    </div>
     </div>
   );
 };
