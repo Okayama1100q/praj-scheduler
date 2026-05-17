@@ -205,47 +205,6 @@ const CreateScheduleModal = ({ isOpen, onClose, onSuccess, preselectedDay }) => 
 
 const F1Background = () => (
   <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none opacity-40">
-    <style>{`
-      @keyframes f1-zoom-anim {
-        0% { transform: translateX(-160px); }
-        15% { transform: translateX(105vw); }
-        100% { transform: translateX(105vw); }
-      }
-      @keyframes grid-drift-anim {
-        from { background-position: 0 0; }
-        to { background-position: 40px 40px; }
-      }
-      @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-      }
-      .animate-f1-zoom {
-        animation: f1-zoom-anim 10s cubic-bezier(0.25, 1, 0.5, 1) infinite;
-        animation-delay: 1.5s;
-      }
-      .animate-grid-drift {
-        animation: grid-drift-anim 12s linear infinite;
-      }
-      .f1-wheel {
-        transform-origin: center;
-        animation: spin 0.1s linear infinite;
-      }
-      .bg-carbon {
-        background-color: #050507;
-        background-image: 
-          linear-gradient(45deg, #09090b 25%, transparent 25%), 
-          linear-gradient(-45deg, #09090b 25%, transparent 25%), 
-          linear-gradient(45deg, transparent 75%, #09090b 75%), 
-          linear-gradient(-45deg, transparent 75%, #09090b 75%);
-        background-size: 8px 8px;
-        background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
-      }
-      .gradient-text {
-        background: linear-gradient(135deg, #ffffff 40%, #ff453a 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-    `}</style>
     
     {/* Animated grid background */}
     <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] animate-grid-drift" />
@@ -653,7 +612,6 @@ const Dashboard = () => {
         preselectedDay={selectedDay}
       />
       </div>
-    </div>
     </div>
   );
 };
