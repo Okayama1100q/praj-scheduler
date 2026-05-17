@@ -32,6 +32,7 @@ const StudyMode = () => {
   const [isStarted, setIsStarted] = useState(false);
   const [activeView, setActiveView] = useState('pdf');
   const [showEndConfirm, setShowEndConfirm] = useState(false);
+  const [totalDuration, setTotalDuration] = useState(null);
 
   const timerRef = useRef(null);
   const statusPollRef = useRef(null);
@@ -50,6 +51,7 @@ const StudyMode = () => {
         if (durationSeconds < 0) durationSeconds += 24 * 3600;
 
         setTimeLeft(durationSeconds);
+        setTotalDuration(durationSeconds);
       } catch (err) {
         console.error('Failed to fetch session info', err);
         navigate('/');
@@ -266,13 +268,62 @@ const StudyMode = () => {
               {isStarted ? 'Time Remaining' : 'Ready to Start'}
             </p>
 
-            <div className="mb-8 lg:mb-12">
+            <div className="mb-8 lg:mb-12 flex flex-col items-center">
               <h1 className="text-6xl lg:text-8xl font-mono font-medium tracking-tight text-white select-none gradient-text" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                 {formatTime(timeLeft)}
               </h1>
               <p className="text-[9px] lg:text-[11px] font-bold text-white/20 mt-2 lg:mt-4 uppercase tracking-[0.2em]">
-                Duration: {formatTime(timeLeft)}
+                Duration: {formatTime(totalDuration)}
               </p>
+              
+              {/* Formula 1 Car Timer Progress Track */}
+              {isStarted && (
+                <div className="mt-8 w-full px-2">
+                  <div className="relative w-full h-8 bg-black/60 border border-white/5 rounded-full overflow-hidden flex items-center px-4">
+                    {/* Curb Stripes */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-[repeating-linear-gradient(90deg,#ff453a,#ff453a_10px,#fff_10px,#fff_20px)] opacity-30" />
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-[repeating-linear-gradient(90deg,#ff453a,#ff453a_10px,#fff_10px,#fff_20px)] opacity-30" />
+
+                    {/* Racetrack center line */}
+                    <div className="w-full h-1.5 bg-neutral-900 rounded-full relative">
+                      {/* Neon speed trail */}
+                      <div 
+                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-600/10 to-[#FF453A] rounded-full shadow-[0_0_10px_#ff453a]" 
+                        style={{ width: `${totalDuration && timeLeft !== null ? ((totalDuration - timeLeft) / totalDuration) * 100 : 0}%` }}
+                      />
+                      
+                      {/* F1 Car Progress Indicator */}
+                      <div 
+                        className="absolute -top-3.5 transition-all duration-1000 ease-linear"
+                        style={{ 
+                          left: `${totalDuration && timeLeft !== null ? ((totalDuration - timeLeft) / totalDuration) * 100 : 0}%`, 
+                          transform: 'translateX(-50%)' 
+                        }}
+                      >
+                        <svg className="w-9 h-8" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle className="f1-wheel" cx="25" cy="28" r="9" fill="#111" stroke="#FF453A" strokeWidth="2" style={{ transformOrigin: '25px 28px' }} />
+                          <circle cx="25" cy="28" r="4" fill="#FFF" />
+                          <path d="M5 8H12V14H5V8Z" fill="#FF453A" />
+                          <path d="M10 8L7 28H11L14 8H10Z" fill="#FFF" />
+                          <path d="M12 28C24 28 32 20 46 20C60 20 75 25 100 25C106 25 110 22 113 28H12Z" fill="#FF453A" />
+                          <circle cx="49" cy="16" r="3" fill="#FFF" />
+                          <circle className="f1-wheel" cx="95" cy="28" r="8" fill="#111" stroke="#FF453A" strokeWidth="2" style={{ transformOrigin: '95px 28px' }} />
+                          <circle cx="95" cy="28" r="3.5" fill="#FFF" />
+                          <path d="M1 28L8 26L6 29L1 28Z" fill="#FF9500" />
+                        </svg>
+                      </div>
+
+                      {/* Checkered flag finish */}
+                      <div className="absolute right-0 -top-2 flex flex-col gap-0.5 z-10">
+                        <div className="w-4 h-4 bg-[repeating-conic-gradient(#000_0%_25%,#fff_0%_50%)] bg-[size:4px_4px] border border-white/20 rounded shadow" />
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[8px] font-bold text-white/40 tracking-[0.25em] uppercase mt-2.5 font-mono text-center">
+                    Telemetry: {Math.round(totalDuration && timeLeft !== null ? ((totalDuration - timeLeft) / totalDuration) * 100 : 0)}% Lapped
+                  </p>
+                </div>
+              )}
             </div>
 
             <AnimatePresence mode="wait">

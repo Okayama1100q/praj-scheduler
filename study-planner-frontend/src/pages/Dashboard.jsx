@@ -204,11 +204,18 @@ const CreateScheduleModal = ({ isOpen, onClose, onSuccess, preselectedDay }) => 
 };
 
 const F1Background = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none opacity-40">
+  <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 select-none opacity-40">
     
     {/* Animated grid background */}
     <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] animate-grid-drift" />
     
+    {/* Moving Speed Stripes */}
+    <div className="speed-stripe-red left-[10%] animate-[speed-line-red_5s_linear_infinite]" />
+    <div className="speed-stripe-white left-[25%] animate-[speed-line-white_7s_linear_infinite_1.5s]" />
+    <div className="speed-stripe-red left-[45%] animate-[speed-line-red_6s_linear_infinite_3s]" />
+    <div className="speed-stripe-white left-[65%] animate-[speed-line-white_8s_linear_infinite_0.5s]" />
+    <div className="speed-stripe-red left-[85%] animate-[speed-line-red_4s_linear_infinite_2s]" />
+
     {/* Racetrack curbs/lines at the bottom */}
     <div className="absolute bottom-10 left-0 w-full h-1 bg-[repeating-linear-gradient(45deg,#ff453a,#ff453a_10px,#fff_10px,#fff_20px)] shadow-[0_0_15px_#ff453a55]" />
 
@@ -375,14 +382,14 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="bg-carbon min-h-screen text-white relative overflow-hidden font-syne">
+    <div className="bg-racing-mesh min-h-screen text-white relative overflow-hidden font-syne">
       <div className="max-w-[1400px] mx-auto px-4 lg:px-0 h-screen flex flex-col relative z-10">
         <F1Background />
         
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-6 lg:mb-8 gap-4 flex-shrink-0 pt-4">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
             <h1 className="text-4xl lg:text-6xl font-black text-white mb-1 lg:mb-2 tracking-tighter font-syne uppercase gradient-text flex items-center gap-2">
-              Planner
+              Praj Scheduler
               <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#FF453A] animate-pulse" />
             </h1>
             <p className="text-white/40 font-semibold text-[9px] lg:text-xs uppercase tracking-[0.2em] font-mono">Telemetry Week Architecture</p>
