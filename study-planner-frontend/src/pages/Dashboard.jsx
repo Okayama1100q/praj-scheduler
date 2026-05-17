@@ -393,20 +393,20 @@ const Dashboard = () => {
               Live Telemetry Grid
             </h2>
           </motion.div>
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+          <div className="flex gap-2 w-full sm:w-auto items-center">
             <button 
               onClick={handleClearAll}
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 lg:px-5 h-10 lg:h-12 text-[9px] lg:text-xs font-black uppercase tracking-widest transition-all duration-300 rounded-xl lg:rounded-2xl border border-[#FF453A]/30 bg-[#FF453A]/10 text-[#FF453A] hover:bg-[#FF453A]/20 active:scale-[0.98] font-mono"
+              className="flex items-center justify-center gap-2 h-10 lg:h-12 rounded-xl lg:rounded-2xl border border-[#FF453A]/30 bg-[#FF453A]/10 text-[#FF453A] hover:bg-[#FF453A]/20 active:scale-[0.98] font-mono transition-all duration-300 w-10 sm:w-auto px-0 sm:px-5"
               title="Delete Everything"
             >
-              <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-[#FF453A]" />
-              <span>Delete Everything</span>
+              <Trash2 className="w-4 h-4 text-[#FF453A]" />
+              <span className="hidden sm:inline text-[9px] lg:text-xs font-black uppercase tracking-widest">Delete Everything</span>
             </button>
             <button 
               onClick={() => openAddModal(selectedDay || 'Monday')}
               className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 lg:px-8 h-10 lg:h-12 text-[9px] lg:text-xs font-black uppercase tracking-widest transition-all duration-300 rounded-xl lg:rounded-2xl bg-white text-black hover:bg-neutral-200 active:scale-[0.98] font-mono shadow-[0_0_15px_rgba(255,255,255,0.1)]"
             >
-              <Plus className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+              <Plus className="w-4 h-4" />
               <span>New Plan</span>
             </button>
           </div>
