@@ -11,13 +11,14 @@ import {
   Calendar,
   AlertCircle,
   CheckCircle2,
-  XCircle
+  XCircle,
+  Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { requestNotificationPermission, sendNotification } from '../services/notificationService';
 
-const CompactScheduleCard = ({ schedule, isCompleted, isMissed, onStart }) => (
+const CompactScheduleCard = ({ schedule, isCompleted, isMissed, onStart, onDelete }) => (
   <motion.div 
     whileHover={{ scale: 1.02 }}
     className={`p-2 lg:p-3 rounded-lg lg:rounded-xl border shadow-2xl transition-all group relative cursor-pointer ${
@@ -37,10 +38,22 @@ const CompactScheduleCard = ({ schedule, isCompleted, isMissed, onStart }) => (
             {schedule.startTime}
           </span>
         </div>
-        {isCompleted && <CheckCircle2 className="w-2.5 h-2.5 lg:w-3.5 lg:h-3.5 text-emerald-500" />}
-        {isMissed && <XCircle className="w-2.5 h-2.5 lg:w-3.5 lg:h-3.5 text-red-500" />}
+        <div className="flex items-center gap-1 z-10">
+          {isCompleted && <CheckCircle2 className="w-2.5 h-2.5 lg:w-3.5 lg:h-3.5 text-emerald-500" />}
+          {isMissed && <XCircle className="w-2.5 h-2.5 lg:w-3.5 lg:h-3.5 text-red-500" />}
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(schedule._id);
+            }}
+            className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 hover:bg-red-500/20 rounded text-white/20 hover:text-red-400 ml-1"
+            title="Delete Plan"
+          >
+            <Trash2 className="w-2.5 h-2.5 lg:w-3 h-3" />
+          </button>
+        </div>
       </div>
-      <h4 className={`text-[9px] lg:text-[12px] font-bold leading-tight font-syne transition-colors truncate ${
+      <h4 className={`text-[9px] lg:text-[12px] font-bold leading-tight font-syne transition-colors truncate pr-4 ${
         isCompleted 
           ? 'text-emerald-400' 
           : isMissed
@@ -200,7 +213,7 @@ const Dashboard = () => {
   const [selectedDay, setSelectedDay] = useState('Monday');
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const times = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
+  const times = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '00:00'];
 
   const fetchData = async () => {
     try {
@@ -273,6 +286,16 @@ const Dashboard = () => {
     navigate(`/study/${id}`);
   };
 
+  const handleDeleteSchedule = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this schedule? This will also clear session history for it.")) return;
+    try {
+      await api.delete(`/schedule/${id}`);
+      fetchData();
+    } catch (err) {
+      console.error("Failed to delete schedule", err);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -298,7 +321,7 @@ const Dashboard = () => {
       </div>
 
       <div className="flex-1 min-h-0 relative pb-4 overflow-hidden">
-        <div className="grid grid-cols-7 lg:grid-cols-8 gap-1 lg:gap-2 mb-2 lg:mb-4 pr-1 lg:pr-0 lg:pl-16">
+        <div className="grid grid-cols-7 lg:grid-cols-7 gap-1 lg:gap-2 mb-2 lg:mb-4 pr-1 lg:pr-0 lg:pl-16">
           {days.map((day) => (
             <div key={day} className="text-center">
               <h3 className="text-[7px] lg:text-[10px] font-black text-white/20 uppercase tracking-[0.1em] lg:tracking-[0.2em] font-syne">
@@ -324,17 +347,18 @@ const Dashboard = () => {
               
               const calculateTop = (timeStr) => {
                 if (!timeStr) return 0;
-                const [h, m] = timeStr.split(':').map(Number);
+                let [h, m] = timeStr.split(':').map(Number);
+                if (h === 0) h = 24; // Treat 00:00 as 24:00
                 const totalMins = (h * 60 + m) - (8 * 60);
-                const percentage = (totalMins / 840) * 100;
+                const percentage = (totalMins / 960) * 100;
                 return Math.max(0, Math.min(percentage, 100));
               };
 
               return (
                 <div key={day} className="relative h-full bg-white/[0.02] backdrop-blur-md rounded-xl lg:rounded-[2.5rem] border border-white/5 p-1 lg:p-3 group hover:bg-white/[0.05] transition-all overflow-hidden">
                   <div className="absolute inset-0 pointer-events-none">
-                    {[...Array(14)].map((_, i) => (
-                      <div key={i} className="w-full h-[1px] bg-white/[0.02]" style={{ top: `${(i / 14) * 100}%` }} />
+                    {[...Array(16)].map((_, i) => (
+                      <div key={i} className="w-full h-[1px] bg-white/[0.02]" style={{ top: `${(i / 16) * 100}%` }} />
                     ))}
                   </div>
 
@@ -354,6 +378,7 @@ const Dashboard = () => {
                             isCompleted={isCompleted}
                             isMissed={isMissed}
                             onStart={handleStartStudy} 
+                            onDelete={handleDeleteSchedule}
                           />
                         </div>
                       );

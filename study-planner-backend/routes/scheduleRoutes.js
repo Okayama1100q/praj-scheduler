@@ -93,4 +93,35 @@ router.put("/:id", auth, async (req, res) => {
 });
 
 
+// =======================
+// DELETE SCHEDULE
+// =======================
+router.delete("/:id", auth, async (req, res) => {
+    try {
+        const schedule = await Schedule.findById(req.params.id);
+
+        if (!schedule) {
+            return res.status(404).json({ msg: "Schedule not found" });
+        }
+
+        // 🔒 ownership check
+        if (schedule.user.toString() !== req.user) {
+            return res.status(403).json({ msg: "Unauthorized" });
+        }
+
+        // Delete associated sessions and the schedule itself
+        await Session.deleteMany({ schedule: schedule._id });
+        await Schedule.deleteOne({ _id: schedule._id });
+
+        res.json({
+            msg: "Schedule and associated sessions deleted successfully"
+        });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+
 module.exports = router;
