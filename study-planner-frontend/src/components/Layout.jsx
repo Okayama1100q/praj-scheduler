@@ -10,7 +10,8 @@ import {
   User,
   ChevronRight,
   ShieldCheck,
-  UserCircle
+  UserCircle,
+  Zap
 } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,10 +27,10 @@ const SidebarLink = ({ to, icon: Icon, children, onClick }) => (
     {({ isActive }) => (
       <>
         <div className="flex items-center gap-4">
-          <Icon className={`w-4 h-4 transition-colors ${isActive ? 'text-black' : 'group-hover:text-indigo-400'}`} />
+          <Icon className={`w-4 h-4 transition-colors ${isActive ? 'text-white' : 'group-hover:text-red-400'}`} />
           <span className="text-[13px] font-black uppercase tracking-[0.15em]">{children}</span>
         </div>
-        <ChevronRight className={`w-3 h-3 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-all`} />
+        <ChevronRight className={`w-3 h-3 ${isActive ? 'opacity-100 text-white' : 'opacity-0 group-hover:opacity-100'} transition-all`} />
       </>
     )}
   </NavLink>
@@ -86,10 +87,13 @@ const Layout = ({ children }) => {
         <div className="flex flex-col h-full pt-32 lg:pt-12 pb-12 px-8">
 
           <div className="flex items-center gap-4 mb-16 px-2">
-            <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shadow-2xl shadow-white/10">
-              <BookOpen className="w-5 h-5 text-black" />
+            <div className="w-10 h-10 rounded-2xl bg-[#E81C23] flex items-center justify-center shadow-2xl shadow-[#E81C23]/25">
+              <Zap className="w-5 h-5 text-white animate-pulse" strokeWidth={3} />
             </div>
-            <h2 className="text-2xl font-black tracking-tighter text-white font-syne uppercase">Planner</h2>
+            <h2 className="text-xl font-black tracking-tighter text-white font-syne uppercase leading-none">
+              Praj<br />
+              <span className="text-[#E81C23]">Scheduler</span>
+            </h2>
           </div>
 
           <nav className="flex-1 space-y-3">

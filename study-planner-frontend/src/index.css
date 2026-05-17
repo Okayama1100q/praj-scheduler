@@ -175,9 +175,9 @@ body {
 }
 
 .nav-link-active {
-  background: white;
-  color: black !important;
-  box-shadow: 0 15px 30px rgba(255, 255, 255, 0.1);
+  background: #E81C23 !important;
+  color: white !important;
+  box-shadow: 0 10px 25px rgba(232, 28, 35, 0.35);
 }
 
 .nav-link-inactive {

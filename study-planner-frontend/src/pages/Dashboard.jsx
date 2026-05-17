@@ -388,11 +388,10 @@ const Dashboard = () => {
         
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-6 lg:mb-8 gap-4 flex-shrink-0 pt-4">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-            <h1 className="text-4xl lg:text-6xl font-black text-white mb-1 lg:mb-2 tracking-tighter font-syne uppercase gradient-text flex items-center gap-2">
-              Praj Scheduler
-              <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#FF453A] animate-pulse" />
-            </h1>
-            <p className="text-white/40 font-semibold text-[9px] lg:text-xs uppercase tracking-[0.2em] font-mono">Telemetry Week Architecture</p>
+            <h2 className="text-[10px] lg:text-[11px] font-black text-[#FF453A] uppercase tracking-[0.3em] font-mono flex items-center gap-1.5 pt-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF453A] animate-pulse" />
+              Live Telemetry Grid
+            </h2>
           </motion.div>
           <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
             <button 
