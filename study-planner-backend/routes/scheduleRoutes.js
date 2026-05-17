@@ -94,6 +94,22 @@ router.put("/:id", auth, async (req, res) => {
 
 
 // =======================
+// CLEAR ALL SCHEDULES
+// =======================
+router.delete("/clear-all", auth, async (req, res) => {
+    try {
+        await Session.deleteMany({ user: req.user });
+        await Schedule.deleteMany({ user: req.user });
+        res.json({
+            msg: "All schedules and session history cleared successfully"
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+// =======================
 // DELETE SCHEDULE
 // =======================
 router.delete("/:id", auth, async (req, res) => {

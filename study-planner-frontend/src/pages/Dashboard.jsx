@@ -224,7 +224,7 @@ const Dashboard = () => {
       setSchedules(schedulesRes.data);
       
       const startOfWeek = new Date();
-      startOfWeek.setDate(startOfWeek.getDate() - (startOfWeek.getDay() === 0 ? 6 : startOfWeek.getDay() - 1));
+      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Reset on Sunday
       startOfWeek.setHours(0, 0, 0, 0);
 
       const thisWeekSessions = historyRes.data.filter(s => {
@@ -261,14 +261,22 @@ const Dashboard = () => {
 
   const isScheduleMissed = (schedule) => {
     const now = new Date();
-    const currentDay = days[now.getDay() === 0 ? 6 : now.getDay() - 1];
     
-    // Only check for current day and past days of the week
-    const dayIndex = days.indexOf(schedule.day);
-    const currentDayIndex = days.indexOf(currentDay);
+    const dayValues = {
+      'Sunday': 0,
+      'Monday': 1,
+      'Tuesday': 2,
+      'Wednesday': 3,
+      'Thursday': 4,
+      'Friday': 5,
+      'Saturday': 6
+    };
 
-    if (dayIndex < currentDayIndex) return true; // Past day
-    if (dayIndex === currentDayIndex) {
+    const scheduleDayVal = dayValues[schedule.day];
+    const todayVal = now.getDay(); // 0-6 starting on Sunday
+
+    if (scheduleDayVal < todayVal) return true; // Past day
+    if (scheduleDayVal === todayVal) {
       const [endH, endM] = schedule.endTime.split(':').map(Number);
       const endTime = new Date();
       endTime.setHours(endH, endM, 0, 0);
@@ -296,6 +304,19 @@ const Dashboard = () => {
     }
   };
 
+  const handleClearAll = async () => {
+    if (!window.confirm("WARNING: This will permanently DELETE all plans and all session history! Are you absolutely sure you want to start completely fresh?")) return;
+    try {
+      setLoading(true);
+      await api.delete('/schedule/clear-all');
+      await fetchData();
+    } catch (err) {
+      console.error("Failed to clear schedules", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -311,13 +332,23 @@ const Dashboard = () => {
           <h1 className="text-3xl lg:text-5xl font-black text-white mb-1 lg:mb-2 tracking-tighter font-syne uppercase gradient-text">Planner</h1>
           <p className="text-white/40 font-medium text-[10px] lg:text-sm uppercase tracking-widest">Week Architecture</p>
         </motion.div>
-        <button 
-          onClick={() => openAddModal('Monday')}
-          className="premium-button flex items-center gap-2 lg:gap-3 px-4 lg:px-8 h-10 lg:h-12 text-[10px] lg:text-xs"
-        >
-          <Plus className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-          <span>New Plan</span>
-        </button>
+        <div className="flex gap-2 lg:gap-3">
+          <button 
+            onClick={handleClearAll}
+            className="flex items-center gap-2 px-3 lg:px-5 h-10 lg:h-12 text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all duration-300 rounded-xl lg:rounded-2xl border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 active:scale-[0.98]"
+            title="Delete Everything"
+          >
+            <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-red-400" />
+            <span className="hidden sm:inline">Delete Everything</span>
+          </button>
+          <button 
+            onClick={() => openAddModal(selectedDay || 'Monday')}
+            className="premium-button flex items-center gap-2 lg:gap-3 px-4 lg:px-8 h-10 lg:h-12 text-[10px] lg:text-xs"
+          >
+            <Plus className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+            <span>New Plan</span>
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 min-h-0 relative pb-4 overflow-hidden">
