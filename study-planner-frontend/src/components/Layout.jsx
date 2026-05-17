@@ -69,7 +69,9 @@ const Layout = ({ children }) => {
         >
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
-        <div className="flex-1 text-center font-black text-xl tracking-tighter uppercase font-syne text-white">Praj</div>
+        <div className="flex-1 text-center font-black text-[15px] sm:text-lg tracking-tighter uppercase font-syne text-white leading-none">
+          Praj <span className="text-[#CCFF00]">Scheduler</span>
+        </div>
         <button 
           onClick={() => navigate('/profile')}
           className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white"

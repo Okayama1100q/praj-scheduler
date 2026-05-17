@@ -116,7 +116,7 @@ const CreateScheduleModal = ({ isOpen, onClose, onSuccess, preselectedDay }) => 
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="glass-panel w-full max-w-lg p-8 lg:p-12 relative z-10 shadow-[0_0_100px_rgba(99,102,241,0.1)] border-white/10"
+            className="glass-panel w-full max-w-lg p-8 lg:p-12 relative z-10 shadow-[0_0_100px_rgba(204,255,0,0.08)] border-white/10"
           >
             <div className="flex justify-between items-center mb-10">
               <h2 className="text-3xl font-black text-white font-syne uppercase">New Architecture</h2>
@@ -385,14 +385,14 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#CCFF00]" />
       </div>
     );
   }
 
   return (
     <div className="bg-racing-mesh min-h-screen text-white relative overflow-hidden font-syne">
-      <div className="max-w-[1400px] mx-auto px-4 lg:px-0 h-[calc(100vh-64px)] lg:h-[calc(100vh-100px)] flex flex-col relative z-10 lg:pb-12">
+      <div className="max-w-[1400px] mx-auto px-4 lg:px-0 h-auto lg:h-[calc(100vh-100px)] flex flex-col relative z-10 lg:pb-12">
         <F1Background />
         
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-6 lg:mb-8 gap-4 flex-shrink-0 pt-4">

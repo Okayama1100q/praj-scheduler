@@ -132,10 +132,9 @@ body {
 }
 
 .input-field:focus {
-  outline: none;
-  border-color: rgba(99, 102, 241, 0.4);
+  border-color: rgba(204, 255, 0, 0.4);
   background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 40px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0 40px rgba(204, 255, 0, 0.1);
 }
 
 .premium-button {
