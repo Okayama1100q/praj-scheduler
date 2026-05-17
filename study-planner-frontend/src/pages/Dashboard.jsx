@@ -213,7 +213,7 @@ const Dashboard = () => {
   const [selectedDay, setSelectedDay] = useState('Monday');
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const times = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '00:00'];
+  const times = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '00:00', '02:00'];
 
   const fetchData = async () => {
     try {
@@ -333,12 +333,23 @@ const Dashboard = () => {
         </div>
 
         <div className="flex h-full min-h-0">
-          <div className="hidden lg:flex flex-col gap-[40px] pt-4 w-16 flex-shrink-0">
-            {times.map((time) => (
-              <div key={time} className="text-[10px] font-black text-white/20 font-mono tracking-tighter text-right pr-4">
-                {time}
-              </div>
-            ))}
+          <div className="hidden lg:block relative w-16 flex-shrink-0 h-full">
+            {times.map((time) => {
+              const [h, m] = time.split(':').map(Number);
+              let adjustedH = h;
+              if (h < 8) adjustedH += 24;
+              const totalMins = (adjustedH * 60 + m) - (8 * 60);
+              const percentage = (totalMins / 1080) * 100;
+              return (
+                <div 
+                  key={time} 
+                  className="absolute text-[10px] font-black text-white/20 font-mono tracking-tighter text-right pr-4 w-full"
+                  style={{ top: `${percentage}%`, transform: 'translateY(-50%)' }}
+                >
+                  {time}
+                </div>
+              );
+            })}
           </div>
 
           <div className="flex-1 grid grid-cols-7 lg:grid-cols-7 gap-1 lg:gap-2 h-full min-h-0">
@@ -348,17 +359,17 @@ const Dashboard = () => {
               const calculateTop = (timeStr) => {
                 if (!timeStr) return 0;
                 let [h, m] = timeStr.split(':').map(Number);
-                if (h === 0) h = 24; // Treat 00:00 as 24:00
+                if (h < 8) h += 24; // Progression past midnight (00:xx, 01:xx, 02:xx -> 24:xx, 25:xx, 26:xx)
                 const totalMins = (h * 60 + m) - (8 * 60);
-                const percentage = (totalMins / 960) * 100;
+                const percentage = (totalMins / 1080) * 100;
                 return Math.max(0, Math.min(percentage, 100));
               };
 
               return (
                 <div key={day} className="relative h-full bg-white/[0.02] backdrop-blur-md rounded-xl lg:rounded-[2.5rem] border border-white/5 p-1 lg:p-3 group hover:bg-white/[0.05] transition-all overflow-hidden">
                   <div className="absolute inset-0 pointer-events-none">
-                    {[...Array(16)].map((_, i) => (
-                      <div key={i} className="w-full h-[1px] bg-white/[0.02]" style={{ top: `${(i / 16) * 100}%` }} />
+                    {[...Array(18)].map((_, i) => (
+                      <div key={i} className="w-full h-[1px] bg-white/[0.02]" style={{ top: `${(i / 18) * 100}%` }} />
                     ))}
                   </div>
 
