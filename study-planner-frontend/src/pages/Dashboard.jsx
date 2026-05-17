@@ -402,7 +402,7 @@ const Dashboard = () => {
               Live Telemetry Grid
             </h2>
           </motion.div>
-          <div className="flex gap-2 w-full sm:w-auto items-center">
+          <div className="flex gap-2 w-full sm:w-auto items-center justify-end">
             <button 
               onClick={handleClearAll}
               className="flex items-center justify-center gap-2 h-10 lg:h-12 rounded-xl lg:rounded-2xl border border-[#CCFF00]/30 bg-[#CCFF00]/10 text-[#CCFF00] hover:bg-[#CCFF00]/20 active:scale-[0.98] font-mono transition-all duration-300 w-10 sm:w-auto px-0 sm:px-5"
@@ -413,7 +413,7 @@ const Dashboard = () => {
             </button>
             <button 
               onClick={() => openAddModal(selectedDay || 'Monday')}
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 lg:px-8 h-10 lg:h-12 text-[9px] lg:text-xs font-black uppercase tracking-widest transition-all duration-300 rounded-xl lg:rounded-2xl bg-white text-black hover:bg-neutral-200 active:scale-[0.98] font-mono shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+              className="sm:flex-initial flex items-center justify-center gap-2 px-5 lg:px-8 h-10 lg:h-12 text-[9px] lg:text-xs font-black uppercase tracking-widest transition-all duration-300 rounded-xl lg:rounded-2xl bg-white text-black hover:bg-neutral-200 active:scale-[0.98] font-mono shadow-[0_0_15px_rgba(255,255,255,0.1)]"
             >
               <Plus className="w-4 h-4" />
               <span>New Plan</span>
@@ -437,20 +437,20 @@ const Dashboard = () => {
         {/* Mobile Nothing Phone (3a) Layout */}
         <div className="lg:hidden flex flex-col h-full min-h-0 gap-3">
           {/* Day Selector Pills Widget */}
-          <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-none snap-x">
+          <div className="flex w-full justify-between gap-1.5 pb-2">
             {days.map((day) => (
               <button
                 key={day}
                 onClick={() => setSelectedDay(day)}
-                className={`snap-center px-4 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-1.5 ${
+                className={`flex-1 text-center py-2.5 rounded-xl text-[9px] font-black uppercase transition-all duration-300 flex flex-col items-center justify-center min-w-0 ${
                   selectedDay === day 
-                    ? 'bg-[#CCFF00] text-black font-black shadow-[0_0_15px_rgba(204,255,0,0.3)] scale-[1.03]' 
+                    ? 'bg-[#CCFF00] text-black font-black shadow-[0_0_15px_rgba(204,255,0,0.3)] scale-[1.02]' 
                     : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10 hover:text-white/60'
                 }`}
               >
-                {day.substring(0, 3)}
+                <span className="truncate">{day.substring(0, 3)}</span>
                 {selectedDay === day && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#131810]" />
+                  <span className="w-1 h-1 rounded-full bg-[#131810] mt-1" />
                 )}
               </button>
             ))}
