@@ -314,7 +314,7 @@ body {
 }
 
 @media (min-width: 1024px) {
-  html, body, #root {
+  .desktop-viewport-lock {
     overflow-y: hidden !important;
     height: 100vh !important;
     max-height: 100vh !important;

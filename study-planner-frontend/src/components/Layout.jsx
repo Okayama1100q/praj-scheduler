@@ -53,7 +53,7 @@ const Layout = ({ children }) => {
   };
 
   return (
-    <div className="flex min-h-screen relative overflow-hidden bg-[var(--bg-primary)]">
+    <div className="flex min-h-screen relative overflow-hidden bg-[var(--bg-primary)] desktop-viewport-lock">
       {/* Mesh Background */}
       <div className="mesh-container">
         <div className="mesh-blob mesh-blob-1" />
@@ -162,8 +162,8 @@ const Layout = ({ children }) => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 relative z-10 bg-transparent">
-        <div className="max-w-7xl mx-auto p-4 lg:p-8 mt-24 lg:mt-0">
+      <main className="flex-1 relative z-10 bg-transparent lg:h-full lg:overflow-hidden">
+        <div className="max-w-7xl mx-auto p-4 lg:p-8 mt-24 lg:mt-0 lg:h-full lg:flex lg:flex-col lg:overflow-hidden">
 
 
           <AnimatePresence mode="wait">

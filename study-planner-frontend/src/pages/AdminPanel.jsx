@@ -24,7 +24,8 @@ const AdminPanel = ({ activeTab: initialTab }) => {
   const [activeTab, setActiveTab] = useState(initialTab || 'users');
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (showLoading = false) => {
+      if (showLoading) setLoading(true);
       try {
         const [statsRes, usersRes, sessionsRes] = await Promise.all([
           api.get('/admin/stats'),
@@ -37,10 +38,17 @@ const AdminPanel = ({ activeTab: initialTab }) => {
       } catch (err) {
         console.error('Failed to fetch admin data', err);
       } finally {
-        setLoading(false);
+        if (showLoading) setLoading(false);
       }
     };
-    fetchData();
+
+    fetchData(true);
+
+    const interval = setInterval(() => {
+      fetchData(false);
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const formatDuration = (seconds) => {
